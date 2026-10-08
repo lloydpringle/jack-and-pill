@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="color-scheme" content="light only">
+<meta name="theme-color" content="#FFF9F3">
+<title>Jack and Pill</title>
+<style>
+:root{
+  color-scheme:light only;
+  --cream:#FFF9F3; --card:#FFFFFF; --blush:#FCEAE6; --blush-deep:#F9DDD7;
+  --blush-border:#F2B6AD; --coral:#EE5A4F; --coral-dark:#D94A40;
+  --ink:#2E2A33; --ink-soft:#9A93A3; --ink-mid:#6E6878;
+  --amber:#F5A93B; --amber-deep:#E08A26; --navy:#262A3F;
+  --good:#F5A93B; --line:#F1E8E0;
+  --r-lg:26px; --r-md:18px; --r-sm:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+html{background:#FFF9F3 !important}
+body{
+  font-family:"SF Pro Rounded",ui-rounded,"Nunito","Quicksand",-apple-system,system-ui,sans-serif;
+  background:#FFF9F3 !important; color:var(--ink); overscroll-behavior-y:none;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased; user-select:none;-webkit-user-select:none;
+}
+input,textarea{user-select:text;-webkit-user-select:text}
+button{font-family:inherit;border:none;background:none;color:inherit;cursor:pointer}
+.screen{display:none;min-height:100dvh;flex-direction:column}
+.screen.on{display:flex}
+
+/* ---------- shared ---------- */
+.btn{
+  display:block;width:100%;padding:17px 20px;border-radius:999px;
+  background:var(--coral);color:#fff;font-size:17px;font-weight:800;
+  letter-spacing:.2px;text-align:center;transition:transform .15s ease,opacity .2s;
+  box-shadow:0 6px 18px rgba(238,90,79,.28);
+}
+.btn:active{transform:scale(.97)}
+.btn.dis{opacity:.35;pointer-events:none;box-shadow:none}
+.btn.ghost{background:transparent;color:var(--ink-mid);box-shadow:none;font-weight:700}
+.btn.navy{background:var(--navy);box-shadow:0 6px 18px rgba(38,42,63,.25)}
+.eyebrow{font-size:13px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--coral)}
+h1{font-size:28px;font-weight:800;letter-spacing:-.4px;line-height:1.18}
+h2{font-size:21px;font-weight:800;letter-spacing:-.3px}
+.sub{font-size:15.5px;line-height:1.5;color:var(--ink-mid);font-weight:600}
+.reveal{opacity:0;transform:translateY(14px);animation:rise .55s cubic-bezier(.2,.9,.3,1.2) forwards;animation-delay:calc(var(--i,0)*90ms)}
+@keyframes rise{to{opacity:1;transform:none}}
+.ob-body.slide-fwd{animation:slideFwd .5s cubic-bezier(.16,.84,.3,1)}
+.ob-body.slide-back{animation:slideBack .5s cubic-bezier(.16,.84,.3,1)}
+@keyframes slideFwd{0%{opacity:0;transform:translateX(110%)}60%{opacity:1}100%{opacity:1;transform:none}}
+@keyframes slideBack{0%{opacity:0;transform:translateX(-110%)}60%{opacity:1}100%{opacity:1;transform:none}}
+.depth{box-shadow:0 1px 2px rgba(46,42,51,.04),0 8px 18px rgba(46,42,51,.07),0 18px 40px rgba(46,42,51,.06)}
+.opt,.pick{box-shadow:0 2px 5px rgba(46,42,51,.05),0 10px 22px rgba(46,42,51,.05)}
+.opt:active{transform:scale(.98) translateY(1px)}
+@media (prefers-reduced-motion:reduce){
+  .reveal{animation:none;opacity:1;transform:none}
+  *{transition-duration:.01ms!important;animation-duration:.01ms!important}
+}
+
+/* ---------- onboarding ---------- */
+#ob{padding:max(20px,env(safe-area-inset-top)) 24px max(24px,env(safe-area-inset-bottom));overflow:hidden}
+.ob-top{display:flex;align-items:center;gap:14px;min-height:34px}
+.ob-back{width:38px;height:38px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--ink-mid);box-shadow:0 2px 8px rgba(46,42,51,.07);visibility:hidden}
+.ob-back.show{visibility:visible}
+.ob-prog{flex:1;height:6px;border-radius:99px;background:var(--blush);overflow:hidden;visibility:hidden}
+.ob-prog.show{visibility:visible}
+.ob-prog i{display:block;height:100%;border-radius:99px;background:var(--coral);transition:width .4s cubic-bezier(.2,.9,.3,1);width:0}
+.ob-body{flex:1;display:flex;flex-direction:column;justify-content:center;padding:18px 0}
+.ob-foot{padding-top:10px}
+.center{text-align:center}
+.jar-wrap{display:flex;justify-content:center;margin:10px 0 18px}
+.glowwrap{display:flex;flex-direction:column;align-items:center}
+.glow{display:flex;align-items:center;justify-content:center;width:256px;height:256px;border-radius:50%;
+  background:radial-gradient(circle,rgba(242,166,156,.42) 0%,rgba(242,166,156,.16) 45%,rgba(242,166,156,0) 70%)}
+.groundshadow{width:98px;height:15px;border-radius:50%;background:rgba(46,42,51,.10);margin-top:-16px}
+.splash-h{font-size:30px;letter-spacing:-.5px}
+.opt{
+  display:flex;align-items:center;gap:13px;width:100%;padding:17px 18px;margin-top:12px;
+  background:var(--card);border:2px solid transparent;border-radius:var(--r-md);
+  font-size:16.5px;font-weight:700;text-align:left;
+  box-shadow:0 3px 12px rgba(46,42,51,.05);transition:transform .12s,border-color .15s,background .15s;
+}
+.opt:active{transform:scale(.98)}
+.opt.sel{background:var(--blush);border-color:var(--blush-border)}
+.opt .em{font-size:21px;width:28px;text-align:center}
+.opt small{display:block;font-size:13px;font-weight:600;color:var(--ink-soft);margin-top:2px}
+.opt .tail{margin-left:auto;font-size:12px;font-weight:800;color:var(--coral);background:#fff;border-radius:99px;padding:4px 10px;display:none}
+.opt.rec .tail{display:block}
+/* toggle rows on picks screen */
+.pick{display:flex;align-items:center;gap:13px;padding:15px 16px;margin-top:11px;background:var(--card);border-radius:var(--r-md);box-shadow:0 3px 12px rgba(46,42,51,.05)}
+.pick .em{font-size:24px}
+.pick .nm{font-size:16px;font-weight:800}
+.pick .ds{font-size:13px;font-weight:600;color:var(--ink-soft);margin-top:1px}
+.poptag{font-size:10.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--coral);background:var(--blush);border-radius:99px;padding:4px 9px;flex:none}
+.tog{margin-left:auto;width:52px;height:31px;border-radius:99px;background:#E9E2DA;position:relative;transition:background .2s;flex:none}
+.tog i{position:absolute;top:3px;left:3px;width:25px;height:25px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.18);transition:left .2s cubic-bezier(.2,.9,.3,1.3)}
+.tog.on{background:var(--coral)}
+.tog.on i{left:24px}
+/* loading */
+.loadjar{margin:0 auto 22px;display:flex;justify-content:center}
+.loadjar svg{transition:none}
+.fact{background:var(--blush);border-radius:var(--r-md);padding:20px;font-size:16.5px;font-weight:700;line-height:1.55;color:var(--ink);min-height:104px;display:flex;align-items:center;justify-content:center;text-align:center;transition:opacity .2s}
+.fact b{color:var(--coral)}
+/* mini demo */
+.demo-row{display:flex;align-items:center;gap:13px;background:var(--card);border-radius:var(--r-md);padding:16px;box-shadow:0 4px 14px rgba(46,42,51,.07);margin:16px auto 0;max-width:330px}
+.timepick{display:flex;justify-content:center;margin-top:18px}
+.timepick input{font-family:inherit;font-size:34px;font-weight:800;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:var(--r-md);padding:10px 16px;text-align:center}
+.dotsrow{display:flex;gap:9px;justify-content:center;margin-top:18px}
+.dotsrow .d{width:30px;height:30px;border-radius:50%;background:var(--blush);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--ink-soft)}
+.dotsrow .d.f{background:var(--amber);color:#fff}
+.confetti{position:absolute;width:9px;height:9px;border-radius:2px;animation:conf 1.1s ease-out forwards;pointer-events:none;z-index:50}
+.phonemock{margin:22px auto 0;width:236px;background:#fff;border-radius:24px;box-shadow:0 14px 36px rgba(46,42,51,.16);border:1px solid var(--line);overflow:hidden}
+.pm-screen{padding:16px 15px 18px;text-align:left}
+.pm-head{font-size:15px;font-weight:800;color:var(--ink);margin-bottom:12px}
+.pm-field{background:#fff;border:2px solid var(--line);border-radius:12px;padding:9px 12px;min-height:46px;display:flex;flex-direction:column;justify-content:center;position:relative;transition:border-color .2s}
+.pm-field.focus{border-color:var(--blush-border);background:#FFFDFB}
+.pm-lbl{font-size:9.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-soft)}
+.pm-val{font-size:15px;font-weight:700;color:var(--ink);min-height:18px}
+.pm-cursor{position:absolute;left:12px;bottom:11px;width:2px;height:17px;background:var(--coral);animation:blink 1s step-end infinite;display:none}
+@keyframes blink{50%{opacity:0}}
+.pm-row{display:flex;gap:8px;margin-top:9px}
+.pm-half{flex:1}
+.pm-btn{width:100%;margin-top:12px;padding:12px;border-radius:999px;background:var(--coral);color:#fff;font-size:14.5px;font-weight:800;text-align:center;transition:transform .12s,box-shadow .2s;box-shadow:0 4px 12px rgba(238,90,79,.28)}
+.pm-btn.press{transform:scale(.94);box-shadow:0 2px 6px rgba(238,90,79,.3)}
+.pm-list{max-height:0;opacity:0;overflow:hidden;transition:max-height .4s cubic-bezier(.2,.9,.3,1),opacity .3s,margin-top .3s;margin-top:0}
+.pm-list.show{max-height:80px;opacity:1;margin-top:11px}
+.pm-item{display:flex;align-items:center;gap:10px;background:var(--blush);border-radius:12px;padding:10px 12px;animation:pmdrop .45s cubic-bezier(.3,1.5,.5,1)}
+@keyframes pmdrop{0%{transform:translateY(-12px) scale(.96);opacity:0}100%{transform:none;opacity:1}}
+.pm-item>span:first-child{font-size:20px}
+.pm-item b{font-size:14px;font-weight:800;display:block}
+.pm-item i{font-size:12px;color:var(--ink-soft);font-style:normal;font-weight:600}
+.pm-check{margin-left:auto;width:24px;height:24px;border-radius:50%;background:var(--coral);color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center;font-weight:800}
+@keyframes conf{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(540deg);opacity:0}}
+
+/* ---------- app shell ---------- */
+#app{padding-bottom:calc(86px + env(safe-area-inset-bottom))}
+.page{display:none;padding:max(18px,env(safe-area-inset-top)) 20px 20px}
+.page.on{display:block;animation:pgIn .42s cubic-bezier(.16,.84,.3,1)}
+@keyframes pgIn{0%{opacity:0;transform:translateY(26px) scale(.97)}100%{opacity:1;transform:none}}
+.apphead{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.apphead .date{font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--ink-soft)}
+.apphead h1{font-size:26px}
+.streakpill{display:flex;align-items:center;gap:6px;background:var(--card);border-radius:99px;padding:8px 13px;font-size:14px;font-weight:800;box-shadow:0 3px 10px rgba(46,42,51,.07)}
+.streakpill .fl{font-size:16px}
+.freezerow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.freezechip{font-size:12px;font-weight:800;color:#3E7CB1;background:#E8F2FA;border-radius:99px;padding:5px 11px}
+.freezechip.used{color:#7A6AAE;background:#EFEAF9}
+/* share card */
+.sharecard{background:linear-gradient(160deg,#FFF9EE,#FFEFDC);border:2px solid #F2DDBE;border-radius:22px;padding:22px 18px 16px;text-align:center;box-shadow:0 6px 18px rgba(46,42,51,.08)}
+.sc-jar{display:flex;justify-content:center;margin-bottom:6px}
+.sc-big{font-size:21px;font-weight:900;color:var(--ink)}
+.sc-dots{display:flex;justify-content:center;gap:7px;margin:10px 0 8px}
+.scdot{width:13px;height:13px;border-radius:50%;background:var(--line)}
+.scdot.good{background:#3FAE85}
+.scdot.miss{background:#E8A48F}
+.scdot.neu{background:#D9D3CB}
+.scdot.fut{background:transparent;border:2px dashed var(--line)}
+.sc-streak{font-size:14px;font-weight:800;color:var(--ink-mid)}
+.sc-foot{margin-top:12px;padding-top:10px;border-top:1px dashed #E8D6B8;font-size:12px;font-weight:800;color:#B08D57;letter-spacing:.02em}
+.sharebtn{display:block;width:100%;margin:0 0 14px;padding:13px;border:2px solid var(--line);border-radius:16px;background:var(--card);font-family:inherit;font-size:15px;font-weight:800;color:var(--ink);cursor:pointer;box-shadow:0 3px 10px rgba(46,42,51,.06)}
+.sharebtn:active{transform:scale(.98)}
+/* founder */
+.founderbadge{display:inline-block;margin-top:18px;padding:9px 18px;border-radius:99px;background:linear-gradient(135deg,#FFE9B8,#FFD98F);color:#8A6320;font-size:14px;font-weight:900;box-shadow:0 4px 12px rgba(176,141,87,.25)}
+.founderclaim{margin-left:auto;flex:none;padding:8px 14px;border:none;border-radius:99px;background:#3E7CB1;color:#fff;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer}
+/* milestone in celebration */
+.cel-mile{display:flex;align-items:center;gap:10px;justify-content:center;margin-top:14px;padding:10px 14px;background:#FFF6E3;border:2px solid #F2DDBE;border-radius:16px;font-size:13.5px;font-weight:800;color:#8A6320;max-width:290px;text-align:left}
+.cm-jar{flex:none;display:flex}
+/* tester stats */
+.statrow{display:flex;justify-content:space-between;padding:9px 2px;border-bottom:1px solid var(--line);font-size:14px;font-weight:700;color:var(--ink-mid)}
+.statrow:last-child{border-bottom:none}
+.statrow b{color:var(--ink)}
+.pick .arr{color:var(--ink-soft);font-size:17px;opacity:.6}
+.tabbar{
+  position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-around;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);padding:8px 8px calc(8px + env(safe-area-inset-bottom));z-index:20;
+}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;font-size:11.5px;font-weight:800;color:var(--ink-soft);border-radius:14px}
+.tab .ic{font-size:21px;line-height:1;filter:grayscale(1);opacity:.55;transition:transform .15s}
+.tab.on{color:var(--coral)}
+.tab.on .ic{filter:none;opacity:1;transform:scale(1.12)}
+
+/* today */
+.jarhero{display:flex;flex-direction:column;align-items:center;margin:6px 0 4px;position:relative}
+.jartap{margin-top:6px;font-size:12px;font-weight:800;color:var(--ink-mid);background:var(--card);border-radius:99px;padding:6px 13px;box-shadow:0 2px 8px rgba(46,42,51,.08)}
+.jartap:active{transform:scale(.95)}
+.skingrid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:6px;padding-bottom:6px}
+.wardtier{font-size:13px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--coral);margin-top:18px}
+.wardtierd{font-size:12.5px;font-weight:600;color:var(--ink-soft);margin-bottom:4px}
+.skincard{position:relative;background:var(--card);border:2.5px solid transparent;border-radius:var(--r-md);padding:14px 10px 12px;display:flex;flex-direction:column;align-items:center;box-shadow:0 3px 12px rgba(46,42,51,.05);transition:transform .12s,border-color .15s}
+.skincard:active{transform:scale(.97)}
+.skincard.sel{border-color:var(--coral);background:var(--blush)}
+.skincard.locked{opacity:.62}
+.skinjar{height:88px;display:flex;align-items:center;justify-content:center}
+.skinname{font-size:14.5px;font-weight:800;margin-top:6px}
+.skinblurb{font-size:11.5px;font-weight:600;color:var(--ink-soft);margin-top:1px}
+.skinbadge{margin-top:8px;font-size:11px;font-weight:800;color:#fff;background:var(--coral);border-radius:99px;padding:3px 10px}
+.skinlock{position:absolute;top:10px;right:10px;font-size:15px}
+.jarsum{font-size:15px;font-weight:800;color:var(--ink-mid);margin-top:8px}
+.jarsum b{color:var(--coral)}
+.weekdots{display:flex;justify-content:center;gap:8px;margin:12px 0 4px}
+.wd{width:34px;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:10.5px;font-weight:800;color:var(--ink-soft)}
+.wd .c{width:26px;height:26px;border-radius:50%;background:var(--blush);display:flex;align-items:center;justify-content:center;font-size:12px}
+.wd.good .c{background:var(--amber);color:#fff}
+.wd.part .c{background:linear-gradient(to top,var(--amber) 50%,var(--blush) 50%)}
+.wd.today .c{box-shadow:0 0 0 2.5px var(--coral)}
+.wd.future .c{opacity:.45}
+.banner{display:flex;align-items:center;gap:12px;background:var(--navy);color:#fff;border-radius:var(--r-md);padding:15px 16px;margin:14px 0 4px;box-shadow:0 6px 18px rgba(38,42,63,.25)}
+.banner .tx{flex:1;font-size:14.5px;font-weight:700;line-height:1.35}
+.banner .go{background:#fff;color:var(--navy);font-weight:800;font-size:13.5px;border-radius:99px;padding:9px 14px;flex:none}
+.lowbanner{display:flex;align-items:center;gap:11px;background:#FFF3E6;border:1.5px solid #F2C795;border-radius:var(--r-md);padding:13px 15px;margin:14px 0 4px}
+.lowbanner .lbic{font-size:20px;flex:none}
+.lowbanner .tx{flex:1;font-size:14px;font-weight:700;line-height:1.35;color:#8A5A1E}
+.stockchip{font-size:11px;font-weight:800;color:var(--ink-mid);background:var(--cream);border-radius:99px;padding:4px 9px;flex:none;white-space:nowrap}
+.stockchip.low{color:#B5701A;background:#FFEBD2}
+.sect{margin-top:20px}
+.sect h3{font-size:13px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px;padding-left:4px}
+.row{
+  display:flex;align-items:center;gap:12px;background:var(--card);border-radius:var(--r-md);
+  padding:13px 14px;margin-top:10px;box-shadow:0 2px 5px rgba(46,42,51,.04),0 10px 22px rgba(46,42,51,.05);
+  transition:background .25s,opacity .25s;position:relative;
+}
+.row .em{font-size:25px;width:32px;text-align:center;flex:none}
+.row .info{flex:1;min-width:0}
+.row .nm{font-size:16px;font-weight:800}
+.row .ds{font-size:13px;font-weight:600;color:var(--ink-soft);margin-top:1px}
+.row.taken{background:var(--blush)}
+.row.skipped{opacity:.55}
+.row.notneeded{opacity:.8}
+.row .chip{display:inline-block;font-size:11px;font-weight:800;color:var(--ink-mid);background:var(--cream);border-radius:99px;padding:3px 9px;margin-top:4px}
+.row .chip.ok{color:#3FAE85;background:#E6F6EF}
+.ctl{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none}
+.ctl.skip{font-size:17px;font-weight:800;color:var(--ink-mid);background:#fff;border:2.5px solid var(--line);border-radius:50%}
+.ctl.take{border:2.5px solid var(--blush-border);background:#fff;font-size:20px;color:transparent;transition:background .18s,border-color .18s,transform .12s}
+.ctl.take:active{transform:scale(.9)}
+.row.taken .ctl.take{background:var(--coral);border-color:var(--coral);color:#fff}
+.row.taken .ctl.skip{visibility:hidden}
+.empty{background:var(--card);border-radius:var(--r-lg);padding:34px 24px;text-align:center;margin-top:16px;box-shadow:0 3px 12px rgba(46,42,51,.05)}
+.empty .big{font-size:42px;margin-bottom:10px}
+
+/* stack page */
+.addbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px;margin-top:14px;border:2.5px dashed var(--blush-border);border-radius:var(--r-md);font-size:15.5px;font-weight:800;color:var(--coral)}
+.gear{width:40px;height:40px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 3px 10px rgba(46,42,51,.07)}
+.row .arr{color:var(--ink-soft);font-size:17px;opacity:.6}
+.handle{width:30px;height:44px;display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:20px;flex:none;margin-left:-6px;touch-action:none;cursor:grab}
+.pausetag{font-size:11px;font-weight:800;color:#fff;background:var(--ink-soft);border-radius:99px;padding:3px 9px}
+
+/* weeks page */
+.card{background:var(--card);border-radius:var(--r-lg);padding:18px;margin-top:14px;box-shadow:0 3px 12px rgba(46,42,51,.05)}
+.bigstreak{display:flex;align-items:center;gap:14px}
+.bigstreak .fl{font-size:40px}
+.bigstreak .n{font-size:30px;font-weight:800;line-height:1}
+.bigstreak .l{font-size:13.5px;font-weight:700;color:var(--ink-mid);margin-top:3px}
+.wkrow{padding:14px 2px;border-bottom:1px solid var(--line)}
+.wkrow:last-child{border-bottom:none}
+.wkmain{display:flex;flex-direction:column;gap:8px}
+.wktop{display:flex;align-items:center;justify-content:space-between}
+.wktop .lbl{font-size:14.5px;font-weight:800}
+.wktop .fe{font-size:20px}
+.gddots{display:flex;gap:7px}
+.gddots .gd{width:22px;height:22px;border-radius:50%;background:var(--blush);flex:none}
+.gddots .gd.on{background:var(--amber)}
+.gddots .gd.part{background:linear-gradient(to top,var(--amber) 50%,var(--blush) 50%)}
+.gddots .gd.fut{background:var(--blush);opacity:.4}
+.wkrow .sub2{font-size:12.5px;color:var(--ink-soft);font-weight:700}
+.wkrow .sub2 .hit{color:var(--amber-deep)}
+.insight{background:linear-gradient(135deg,var(--blush),#FFF3EC);border:1.5px solid var(--blush-border)}
+.insight .tt{font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--coral);margin-bottom:6px}
+.insight p{font-size:15px;font-weight:700;line-height:1.5}
+
+/* sheet */
+#shade{position:fixed;inset:0;background:rgba(38,42,63,.42);opacity:0;pointer-events:none;transition:opacity .25s;z-index:30}
+#shade.on{opacity:1;pointer-events:auto}
+#sheet{
+  position:fixed;left:0;right:0;bottom:0;background:var(--cream);z-index:31;
+  border-radius:26px 26px 0 0;padding:10px 20px calc(24px + env(safe-area-inset-bottom));
+  transform:translateY(105%);transition:transform .32s cubic-bezier(.2,.9,.3,1);
+  max-height:88dvh;overflow-y:auto;
+}
+#sheet.on{transform:none}
+.grab{width:42px;height:5px;border-radius:99px;background:#E3DAD1;margin:4px auto 14px}
+.sh-title{font-size:19px;font-weight:800;margin-bottom:4px}
+.sh-sub{font-size:14px;color:var(--ink-mid);font-weight:600;margin-bottom:8px}
+.f-label{font-size:12.5px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--ink-soft);margin:16px 0 7px}
+.f-input{width:100%;padding:14px 15px;border-radius:var(--r-sm);border:2px solid var(--line);background:#fff;font-size:16px;font-weight:700;color:var(--ink)}
+.f-input:focus{outline:none;border-color:var(--blush-border)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chipbtn{padding:9px 13px;border-radius:99px;background:#fff;border:2px solid var(--line);font-size:14px;font-weight:700;transition:all .15s}
+.chipbtn.sel{background:var(--blush);border-color:var(--blush-border);color:var(--ink)}
+.seg{display:flex;background:#fff;border:2px solid var(--line);border-radius:var(--r-sm);overflow:hidden}
+.seg button{flex:1;padding:12px 4px;font-size:13.5px;font-weight:800;color:var(--ink-soft)}
+.seg button.sel{background:var(--blush);color:var(--ink)}
+.dayspick{display:flex;gap:7px;margin-top:10px}
+.dayspick button{flex:1;aspect-ratio:1;border-radius:50%;background:#fff;border:2px solid var(--line);font-size:12.5px;font-weight:800;color:var(--ink-soft)}
+.dayspick button.sel{background:var(--amber);border-color:var(--amber);color:#fff}
+.emojirow{display:flex;flex-wrap:wrap;gap:8px}
+.emojirow button{width:46px;height:46px;border-radius:14px;background:#fff;border:2px solid var(--line);font-size:23px}
+.emojirow button.sel{background:var(--blush);border-color:var(--blush-border)}
+.feelrow{display:flex;justify-content:space-between;margin-top:6px}
+.feelrow button{width:54px;height:54px;border-radius:18px;background:#fff;border:2px solid var(--line);font-size:27px;transition:transform .15s}
+.feelrow button.sel{background:var(--blush);border-color:var(--blush-border);transform:scale(1.12)}
+.stepper{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid var(--line);border-radius:var(--r-sm);padding:6px}
+.stepper button{width:42px;height:42px;border-radius:10px;background:var(--blush);font-size:24px;font-weight:800;color:var(--coral);flex:none;display:flex;align-items:center;justify-content:center}
+.stepper button:active{transform:scale(.94)}
+.stepval{flex:1;text-align:center;font-size:15px;font-weight:700;color:var(--ink-mid)}
+.stepval b{font-size:18px;color:var(--ink)}
+.danger{color:var(--coral);font-weight:800;font-size:15.5px;text-align:center;width:100%;padding:14px;margin-top:6px}
+#toast{
+  position:fixed;left:50%;bottom:calc(104px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);
+  background:var(--navy);color:#fff;font-size:14px;font-weight:700;padding:11px 18px;border-radius:99px;
+  opacity:0;transition:all .3s;z-index:40;pointer-events:none;white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis;
+}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+#celebrate{position:fixed;inset:0;z-index:70;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,249,243,.86);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  opacity:0;pointer-events:none;transition:opacity .3s}
+#celebrate.on{opacity:1;pointer-events:auto}
+.cel-inner{text-align:center;transform:scale(.7);transition:transform .45s cubic-bezier(.3,1.5,.5,1)}
+#celebrate.on .cel-inner{transform:scale(1)}
+.cel-h{font-size:30px;font-weight:800;letter-spacing:-.4px;margin-top:18px;color:var(--ink)}
+.cel-sub{font-size:16px;font-weight:700;color:var(--ink-mid);margin-top:6px}
+/* jar pour */
+.pourdot{animation:pour .5s cubic-bezier(.5,0,.8,.4) forwards}
+@keyframes pour{0%{opacity:0;transform:translateY(0)}15%{opacity:1}100%{opacity:1;transform:translateY(var(--fall))}}
+.jarbounce{animation:jbounce .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes jbounce{0%{transform:scale(1)}35%{transform:scale(1.06,0.94)}70%{transform:scale(.97,1.03)}100%{transform:scale(1)}}
+.jardance{animation:jardance 1.15s cubic-bezier(.4,1.4,.5,1) 1;transform-origin:50% 85%}
+@keyframes jardance{
+ 0%{transform:rotate(0) translateY(0)}
+ 15%{transform:rotate(-9deg) translateY(-10px)}
+ 30%{transform:rotate(8deg) translateY(0)}
+ 45%{transform:rotate(-7deg) translateY(-8px)}
+ 60%{transform:rotate(6deg) translateY(0)}
+ 75%{transform:rotate(-4deg) translateY(-5px)}
+ 100%{transform:rotate(0) translateY(0)}
+}
+.rain{position:fixed;top:-14px;border-radius:3px;z-index:60;pointer-events:none;animation:rainfall linear forwards}
+@keyframes rainfall{0%{transform:translate(0,-10px) rotate(0)}100%{transform:translate(var(--sway),105vh) rotate(var(--spin))}}
+</style>
+</head>
+<body>
+
+<!-- ================= ONBOARDING ================= -->
+<div id="ob" class="screen on">
+  <div class="ob-top">
+    <button class="ob-back" id="obBack">←</button>
+    <div class="ob-prog" id="obProg"><i></i></div>
+  </div>
+  <div class="ob-body" id="obBody"></div>
+  <div class="ob-foot" id="obFoot"></div>
+</div>
+
+<!-- ================= APP ================= -->
+<div id="app" class="screen">
+  <div class="page" id="pgToday"></div>
+  <div class="page" id="pgStack"></div>
+  <div class="page" id="pgWeeks"></div>
+  <nav class="tabbar">
+    <button class="tab on" data-pg="Today"><span class="ic">🫙</span>Today</button>
+    <button class="tab" data-pg="Stack"><span class="ic">💊</span>Stack</button>
+    <button class="tab" data-pg="Weeks"><span class="ic">📈</span>Weeks</button>
+  </nav>
+</div>
+
+<div id="shade"></div>
+<div id="sheet"></div>
+<div id="toast"></div>
+<div id="celebrate"><div class="cel-inner"><div id="celJar"></div><div class="cel-h">Day done!</div><div class="cel-sub">Jack approves 🫙</div><div id="celMile" class="cel-mile" style="display:none"></div></div></div>
+
+<script>
+"use strict";
+/* =================================================================
+   STACKED v1 — supplement tracker prototype
+   ================================================================= */
+const $=s=>document.querySelector(s);
+const SKEY="stacked-v1";
+/* STORAGE-ADAPTER-START ===========================================
+   On claude.ai, window.storage exists and is used untouched. Elsewhere (e.g. Vercel) this
+   installs the same async get/set/delete interface over localStorage, with the same return
+   shapes, so load(), save() and reset never change. Every localStorage call is guarded:
+   a throw or a missing localStorage returns null, so save() shows "Saving unavailable".
+   localStorage is permitted ONLY between these markers (run.sh enforces it). */
+(function(){
+  if(window.storage)return;
+  function ls(){try{return window.localStorage||null;}catch(e){return null;}}
+  window.storage={
+    async get(key){
+      const st=ls();if(!st)throw new Error("storage unavailable");
+      let v;try{v=st.getItem(key);}catch(e){throw new Error("storage unavailable");}
+      if(v===null)throw new Error("key not found"); // same as claude.ai: missing keys throw
+      return {key,value:v,shared:false};
+    },
+    async set(key,value){
+      const st=ls();if(!st)return null;
+      try{st.setItem(key,value);return {key,value,shared:false};}catch(e){return null;}
+    },
+    async delete(key){
+      const st=ls();if(!st)return null;
+      try{st.removeItem(key);return {key,deleted:true,shared:false};}catch(e){return null;}
+    }
+  };
+})();
+/* STORAGE-ADAPTER-END ============================================= */
+const EMOJIS=["💊","⚡","☀️","🦴","🐟","🦠","🌙","🧬","🌿","🍊","❤️","🧪","🥤","💉"];
+const UNIT_GROUPS=[["Amount",["g","mg","µg","IU","ml","billion CFU"]],["Form",["capsule","tablet","softgel","effervescent","gummy","scoop","drops","spray","dose"]]];
+const ALL_UNITS=UNIT_GROUPS.flatMap(g=>g[1]);
+function unitOptions(sel){return UNIT_GROUPS.map(g=>`<optgroup label="${g[0]}">${g[1].map(u=>`<option ${u===sel?"selected":""}>${u}</option>`).join("")}</optgroup>`).join("");}
+const QUICK=[
+ {n:"Creatine",e:"⚡",d:"5",u:"g",sl:"anytime",wf:false},
+ {n:"Vitamin D3",e:"☀️",d:"2000",u:"IU",sl:"morning",wf:true},
+ {n:"Vitamin K2",e:"🦴",d:"100",u:"µg",sl:"morning",wf:true},
+ {n:"Omega 3",e:"🐟",d:"1000",u:"mg",sl:"morning",wf:true},
+ {n:"Magnesium",e:"🌙",d:"300",u:"mg",sl:"evening",wf:false},
+ {n:"Zinc",e:"💊",d:"15",u:"mg",sl:"evening",wf:true},
+ {n:"Vitamin C",e:"🍊",d:"1000",u:"mg",sl:"morning",wf:false},
+ {n:"Acidophilus",e:"🦠",d:"1",u:"capsule",sl:"morning",wf:false},
+ {n:"Ashwagandha",e:"🌿",d:"450",u:"mg",sl:"evening",wf:false},
+ {n:"Collagen",e:"🧬",d:"10",u:"scoop",sl:"anytime",wf:false},
+ {n:"Iron",e:"🧪",d:"14",u:"mg",sl:"morning",wf:false},
+ {n:"B12",e:"❤️",d:"1000",u:"µg",sl:"morning",wf:false},
+ {n:"Protein Powder",e:"🥤",d:"30",u:"g",sl:"anytime",wf:false},
+ {n:"Peptides",e:"🧬",d:"1",u:"dose",sl:"anytime",wf:false}
+];
+const DAYL=["M","T","W","T","F","S","S"]; // Monday-first
+const SKIP_REASONS=[["✈️","Travelling"],["📦","Ran out"],["🤯","Forgot"],["🙅","Not needed today"]];
+const FACTS=[
+ "<b>Did you know?</b> Creatine is one of the most researched supplements in sports science, with 500+ human studies.",
+ "<b>Did you know?</b> Vitamin D3 and K2 are often paired because K2 helps direct calcium to bones.",
+ "<b>Did you know?</b> Around 1 in 3 adults don't get enough magnesium from diet alone.",
+ "<b>Did you know?</b> Consistency beats dosage. Most supplements only show benefits after weeks of regular use."
+];
+const GOAL_ORDER={
+ training:["Creatine","Omega 3","Magnesium","Vitamin D3","Collagen","Zinc","Vitamin C","Vitamin K2","B12","Acidophilus","Ashwagandha","Iron","Protein Powder","Peptides"],
+ energy:["B12","Vitamin D3","Iron","Magnesium","Omega 3","Vitamin C","Creatine","Zinc","Vitamin K2","Acidophilus","Ashwagandha","Collagen","Protein Powder","Peptides"],
+ sleep:["Magnesium","Ashwagandha","Omega 3","Vitamin D3","Zinc","B12","Vitamin C","Vitamin K2","Acidophilus","Creatine","Collagen","Iron","Protein Powder","Peptides"],
+ health:["Vitamin D3","Omega 3","Vitamin C","Magnesium","Zinc","Acidophilus","Vitamin K2","B12","Iron","Collagen","Creatine","Ashwagandha","Protein Powder","Peptides"]
+};
+function buildPicks(goal){
+  const order=GOAL_ORDER[goal]||GOAL_ORDER.health;
+  return order.map((nm,i)=>{
+    const q=QUICK.find(x=>x.n===nm);
+    return {name:q.n,emoji:q.e,dose:q.d,unit:q.u,slot:q.sl,wf:q.wf,freq:"daily",on:false,pop:i<3};
+  });
+}
+
+/* ---------- state ---------- */
+let state={v:1,onboarded:false,
+  profile:{age:"30s",goal:"training",weeklyTarget:5,reminderTime:"08:00"},
+  supps:[],logs:{},checkins:{}};
+let storageOK=true, saveT=null;
+
+async function load(){
+  try{const r=await window.storage.get(SKEY);
+    if(r&&r.value){const d=JSON.parse(r.value); if(d&&d.v===1) state=d;}
+  }catch(e){/* no saved data yet, or storage unavailable — start fresh */}
+  if(!Array.isArray(state.events))state.events=[];
+  if(!Array.isArray(state.profile.milestones))state.profile.milestones=[];
+}
+function track(e){
+  if(!Array.isArray(state.events))state.events=[];
+  state.events.push({e,t:Date.now()});
+  if(state.events.length>600)state.events=state.events.slice(-500);
+  save();
+}
+function save(){
+  clearTimeout(saveT);
+  saveT=setTimeout(async()=>{
+    try{const r=await window.storage.set(SKEY,JSON.stringify(state));
+      if(!r&&storageOK){storageOK=false;toast("Saving unavailable — data lives in this session only");}
+    }catch(e){if(storageOK){storageOK=false;toast("Saving unavailable — data lives in this session only");}}
+  },250);
+}
+
+/* ---------- date helpers (all local time) ---------- */
+const p2=n=>String(n).padStart(2,"0");
+function dkey(d){return d.getFullYear()+"-"+p2(d.getMonth()+1)+"-"+p2(d.getDate());}
+function today(){return new Date();}
+function tkey(){return dkey(today());}
+function fromKey(k){const a=k.split("-");return new Date(+a[0],+a[1]-1,+a[2]);}
+function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x;}
+function mondayOf(d){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());const off=(x.getDay()+6)%7;return addDays(x,-off);}
+function fmtDate(d){return d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});}
+function fmtShort(d){return d.toLocaleDateString("en-GB",{day:"numeric",month:"short"});}
+
+// MONETISATION (decided): option (a) — the free tier has NO supplement cap, ever.
+// Pro = insights, wardrobe, exports, themes. Price model still undecided.
+// FORGIVING=true unlocks Pro features for testers and keeps the Pro row hidden.
+const FORGIVING=true;
+function isPro(){return FORGIVING||state.profile.pro===true;}
+function sorted(a){return a.slice().sort((x,y)=>(x.order??0)-(y.order??0));}
+function normalizeOrders(){state.supps.forEach((s,i)=>{if(typeof s.order!=="number")s.order=i;});}
+
+/* ---------- adherence engine ---------- */
+function dueOn(s,key){
+  if(s.paused)return false;
+  if(s.freq==="asneeded")return false;
+  if(s.created&&key<s.created)return false;
+  if(s.freq==="daily")return true;
+  if(s.freq==="custom"){const dow=(fromKey(key).getDay()+6)%7;return (s.days||[]).includes(dow);}
+  return false;
+}
+function timesOf(s){return Math.max(1,Math.min(8,s.times||1));}
+function doseKeys(s){const n=s.freq==="asneeded"?1:timesOf(s);const out=[s.id];for(let i=2;i<=n;i++)out.push(s.id+"#"+i);return out;}
+function baseId(k){return k.split("#")[0];}
+function dayStats(key){
+  const log=state.logs[key]||{};
+  const due=state.supps.filter(s=>dueOn(s,key));
+  const denomSet=new Set();
+  for(const s of due)for(const dk of doseKeys(s))denomSet.add(dk);
+  // count taken sub-doses even if their supplement was later paused/removed, so history stays fair
+  for(const k in log){if(log[k].s==="taken")denomSet.add(k);}
+  // "not needed today" is not a miss — drop it from the day's maths entirely
+  for(const k in log){if(log[k].s==="skipped"&&log[k].r==="Not needed today")denomSet.delete(k);}
+  const denom=denomSet.size;
+  let taken=0;for(const k of denomSet){if(log[k]&&log[k].s==="taken")taken++;}
+  return {denom,taken,pct:denom?taken/denom:0,good:denom>0&&taken/denom>=0.8,neutral:denom===0};
+}
+function weekStats(monKey){
+  const mon=fromKey(monKey);const tk=tkey();
+  let good=0,taken=0,denom=0,days=[];
+  for(let i=0;i<7;i++){
+    const k=dkey(addDays(mon,i));
+    if(k>tk){days.push({k,future:true});continue;}
+    const st=dayStats(k);days.push({k,...st});
+    if(st.good)good++;taken+=st.taken;denom+=st.denom;
+  }
+  return {good,taken,denom,pct:denom?Math.round(100*taken/denom):0,days};
+}
+function streakWeeks(){
+  const target=state.profile.weeklyTarget;
+  const thisMon=mondayOf(today());
+  const EARN_EVERY=4;   // one freeze token per 4 consecutive good weeks
+  const MAX_FREEZE=2;   // safety net, not a loophole
+  // find the first week of activity
+  const fu=firstUseKey();
+  if(!fu)return {streak:0,alive:true,curGood:weekStats(dkey(thisMon)).good,freezes:0,usedFreeze:false,frozenWeeks:0};
+  let m=mondayOf(fromKey(fu));
+  // walk FORWARD from first week to last completed week, tracking streak + freezes
+  let streak=0,freezes=0,goodRun=0,usedFreeze=false,frozenWeeks=0,guard=0;
+  const lastCompletedMon=addDays(thisMon,-7); // current week handled separately
+  while(dkey(m)<=dkey(lastCompletedMon)&&guard++<400){
+    const ws=weekStats(dkey(m));
+    if(ws.denom===0){m=addDays(m,7);continue;} // skip empty weeks (gaps)
+    if(ws.good>=target){
+      streak++;goodRun++;
+      if(goodRun%EARN_EVERY===0)freezes=Math.min(MAX_FREEZE,freezes+1);
+    }else if(freezes>0){
+      freezes--;usedFreeze=true;frozenWeeks++;goodRun=0;streak++; // freeze saves this week
+    }else{
+      streak=0;goodRun=0; // streak broken; freezes persist as a fresh-start cushion? no — reset cushion too
+      freezes=0;usedFreeze=false;frozenWeeks=0;
+    }
+    m=addDays(m,7);
+  }
+  // current week
+  const cur=weekStats(dkey(thisMon));
+  const remaining=6-((today().getDay()+6)%7);
+  const curMet=cur.good>=target;
+  const curAlive=curMet||cur.good+remaining+1>=target;
+  if(curMet){streak++;goodRun++;if(goodRun%EARN_EVERY===0)freezes=Math.min(MAX_FREEZE,freezes+1);}
+  return {streak,alive:curAlive,curGood:cur.good,freezes,usedFreeze,frozenWeeks};
+}
+function firstUseKey(){
+  let min=null;
+  for(const s of state.supps){if(s.created&&(!min||s.created<min))min=s.created;}
+  for(const k in state.logs){if(!min||k<min)min=k;}
+  return min;
+}
+
+/* ---------- jar SVG ---------- */
+const SKINS=[
+  // ---- starter colourways (4) ----
+  {id:"classic",name:"Classic Jack",blurb:"The original",tier:"starter",container:"#FFFFFF",cstroke:"#E8DCD2",fill:"#F5A93B",gran:"#E08A26",granTop:"#F5A93B",lid:"#262A3F",lid2:"#3A3F5C",shine:"#fff"},
+  {id:"coral",name:"Coral",blurb:"House colours",tier:"starter",container:"#FFFFFF",cstroke:"#F2C9C3",fill:"#EE5A4F",gran:"#D94A40",granTop:"#F47A70",lid:"#262A3F",lid2:"#3A3F5C",shine:"#fff"},
+  {id:"mint",name:"Minty",blurb:"Calm & fresh",tier:"starter",container:"#FFFFFF",cstroke:"#CDE8DA",fill:"#5FC9A0",gran:"#3FAE85",granTop:"#7FD9B6",lid:"#2E5D4E",lid2:"#3F7A66",shine:"#fff"},
+  {id:"midnight",name:"Midnight",blurb:"Biohacker",tier:"starter",container:"#1F2740",cstroke:"#141A2E",fill:"#17D4C4",gran:"#0FA89B",granTop:"#4DE8DA",lid:"#9AA6C7",lid2:"#C2CCE6",shine:"#ffffff",dark:true,glow:"#17D4C4"},
+  // ---- Jack in outfits (4) — same amber jar, accessory on top ----
+  {id:"coach",name:"Coach Jack",blurb:"Gym day",tier:"outfit",container:"#FFFFFF",cstroke:"#E8DCD2",fill:"#F5A93B",gran:"#E08A26",granTop:"#F5A93B",lid:"#262A3F",lid2:"#3A3F5C",shine:"#fff",acc:"headband"},
+  {id:"cool",name:"Cool Jack",blurb:"Feeling good",tier:"outfit",container:"#FFFFFF",cstroke:"#E8DCD2",fill:"#F5A93B",gran:"#E08A26",granTop:"#F5A93B",lid:"#262A3F",lid2:"#3A3F5C",shine:"#fff",acc:"shades"},
+  {id:"wizard",name:"Wizard Jack",blurb:"30-day streak",tier:"outfit",container:"#FFFFFF",cstroke:"#E8DCD2",fill:"#F5A93B",gran:"#E08A26",granTop:"#F5A93B",lid:"#262A3F",lid2:"#3A3F5C",shine:"#fff",acc:"wizard"},
+  {id:"king",name:"King Jack",blurb:"Perfect month",tier:"outfit",container:"#FFFFFF",cstroke:"#E8DCD2",fill:"#F5A93B",gran:"#E08A26",granTop:"#F5A93B",lid:"#262A3F",lid2:"#3A3F5C",shine:"#fff",acc:"crown"},
+  // ---- alternate characters (6) — different shapes ----
+  {id:"bottle",name:"Pip the Bottle",blurb:"Pill bottle",tier:"char",shape:"bottle",fill:"#7C6BC4",gran:"#5E4DA0",granTop:"#9384D6"},
+  {id:"capsule",name:"Cap the Capsule",blurb:"Two-tone capsule",tier:"char",shape:"capsule",fill:"#F5A93B",gran:"#E08A26",granTop:"#F5A93B"},
+  {id:"shaker",name:"Shaky",blurb:"Gym shaker",tier:"char",shape:"shaker",fill:"#2FA8E0",gran:"#1E86C0",granTop:"#5AC2EE"},
+  {id:"bear",name:"Barry the Bear",blurb:"Cosy & warm",tier:"char",shape:"bear",fill:"#F2A33B",gran:"#DA8A22",granTop:"#F7C25C"},
+  {id:"cat",name:"Milo the Cat",blurb:"Playful",tier:"char",shape:"cat",fill:"#EE5A4F",gran:"#D94A40",granTop:"#F47A70"},
+  {id:"fox",name:"Rusty the Fox",blurb:"Clever",tier:"char",shape:"fox",fill:"#F5C84E",gran:"#E0A92A",granTop:"#F7D970"}
+];
+function skinById(id){return SKINS.find(s=>s.id===id)||SKINS[0];}
+function currentSkin(){return skinById(state.profile.skin||"classic");}
+
+// shared face by mood
+function moodFace(mood,ink){
+  const eyes=mood==="zen"
+    ?`<path d="M49 75 q6 7 12 0" stroke="${ink}" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M79 75 q6 7 12 0" stroke="${ink}" stroke-width="4" fill="none" stroke-linecap="round"/>`
+    :mood==="zero"
+    ?`<circle cx="55" cy="78" r="4" fill="${ink}" opacity=".75"/><circle cx="85" cy="78" r="4" fill="${ink}" opacity=".75"/>`
+    :mood==="full"
+    ?`<path d="M49 78 q6 -7 12 0" stroke="${ink}" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M79 78 q6 -7 12 0" stroke="${ink}" stroke-width="4" fill="none" stroke-linecap="round"/>`
+    :`<circle cx="55" cy="78" r="4.5" fill="${ink}"/><circle cx="85" cy="78" r="4.5" fill="${ink}"/>`;
+  const mouth=mood==="zen"
+    ?`<path d="M63 90 q7 6 14 0" stroke="${ink}" stroke-width="4" fill="none" stroke-linecap="round"/>`
+    :mood==="zero"
+    ?`<path d="M62 93 h16" stroke="${ink}" stroke-width="4" stroke-linecap="round" opacity=".75"/>`
+    :mood==="full"
+    ?`<path d="M58 90 q12 13 24 0" stroke="${ink}" stroke-width="4.5" fill="none" stroke-linecap="round"/>`
+    :`<path d="M61 92 q9 8 18 0" stroke="${ink}" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  const cheeks=mood==="full"?`<circle cx="44" cy="88" r="5.5" fill="#F2B6AD" opacity=".7"/><circle cx="96" cy="88" r="5.5" fill="#F2B6AD" opacity=".7"/>`:"";
+  return eyes+mouth+cheeks;
+}
+function granRows(x0,x1,fy,botY,col,topCol){
+  let g="";
+  for(let y=botY-6;y>fy+3;y-=9)for(let x=x0;x<=x1;x+=11){const jx=x+((y*7+x)%5)-2,jy=y+((x*3+y)%4)-1.5;g+=`<circle cx="${jx}" cy="${jy}" r="3.1" fill="${col}" opacity=".5"/>`;}
+  for(let x=x0-2;x<=x1+2;x+=10)g+=`<circle cx="${x+((x*13)%6)-3}" cy="${fy+1.5}" r="4" fill="${topCol}"/>`;
+  return g;
+}
+const ACCESSORIES={
+  headband:`<rect x="34" y="44" width="72" height="13" rx="4" fill="#EE5A4F"/><rect x="34" y="48" width="72" height="3" fill="#fff" opacity=".5"/>`,
+  shades:`<rect x="40" y="72" width="26" height="15" rx="5" fill="#262A3F"/><rect x="74" y="72" width="26" height="15" rx="5" fill="#262A3F"/><rect x="66" y="76" width="8" height="3" fill="#262A3F"/>`,
+  wizard:`<path d="M50 42 L70 -2 L90 42 z" fill="#5B4B9E"/><circle cx="70" cy="14" r="3" fill="#F5D14E"/><circle cx="62" cy="26" r="2.4" fill="#F5D14E"/><circle cx="79" cy="24" r="2" fill="#F5D14E"/><rect x="46" y="40" width="48" height="7" rx="3" fill="#7160B8"/>`,
+  crown:`<path d="M44 42 L44 22 L57 33 L70 18 L83 33 L96 22 L96 42 z" fill="#F5C84E" stroke="#E0A92A" stroke-width="2"/><circle cx="70" cy="26" r="3" fill="#EE5A4F"/>`
+};
+
+function jarSVG(pct,size,mood,skin){
+  pct=Math.max(0,Math.min(1,pct));
+  if(mood===undefined)mood=pct>=1?"full":pct>0?"mid":"zero";
+  const S=skin||currentSkin();
+  if(S.shape)return shapeSVG(pct,size,mood,S);
+  // ---- jar (colourway or outfit) ----
+  const ink=S.dark?"#FFFFFF":"#2E2A33";
+  const W=140,H=160,innerTop=42,innerBot=146,innerH=innerBot-innerTop;
+  const fillH=innerH*pct, fy=innerBot-fillH;
+  const gran=pct>0?granRows(32,108,fy,innerBot,S.gran,S.granTop):"";
+  const glow=S.glow?`<rect x="22" y="38" width="96" height="114" rx="20" fill="none" stroke="${S.glow}" stroke-width="3" opacity=".35"/>`:"";
+  const acc=S.acc?ACCESSORIES[S.acc]:"";
+  return `<svg id="jarsvg" width="${size}" height="${size*H/W}" viewBox="0 0 ${W} ${H}">
+    <defs><clipPath id="jclip"><rect x="26" y="${innerTop}" width="88" height="${innerH}" rx="16"/></clipPath></defs>
+    ${glow}
+    <rect x="22" y="38" width="96" height="114" rx="20" fill="${S.container}" stroke="${S.cstroke}" stroke-width="3"/>
+    <g clip-path="url(#jclip)"><rect id="jfill" x="26" y="${fy}" width="88" height="${fillH+6}" fill="${S.fill}"/>${gran}</g>
+    <rect x="22" y="38" width="96" height="114" rx="20" fill="none" stroke="${S.cstroke}" stroke-width="3"/>
+    <rect x="38" y="20" width="64" height="18" rx="8" fill="${S.lid}"/>
+    <rect x="46" y="14" width="48" height="10" rx="5" fill="${S.lid2}"/>
+    <path d="M34 52 q3 14 0 34" stroke="${S.shine}" stroke-width="5" stroke-linecap="round" opacity=".5"/>
+    ${moodFace(mood,ink)}${acc}
+  </svg>`;
+}
+
+// alternate-character shapes — all expose #jfill so pour/fill animations keep working
+function shapeSVG(pct,size,mood,S){
+  const W=140,H=160;
+  const svg=b=>`<svg id="jarsvg" width="${size}" height="${size*H/W}" viewBox="0 0 ${W} ${H}">${b}</svg>`;
+  if(S.shape==="bottle"){
+    const top=46,bot=150,h=bot-top,fh=h*pct,fy=bot-fh;
+    return svg(`<defs><clipPath id="pb"><rect x="34" y="${top}" width="72" height="${h}" rx="12"/></clipPath></defs>
+      <rect x="34" y="42" width="72" height="108" rx="14" fill="#fff" stroke="#E2D9F0" stroke-width="3"/>
+      <g clip-path="url(#pb)"><rect id="jfill" x="34" y="${fy}" width="72" height="${fh+6}" fill="${S.fill}"/>${pct>0?granRows(42,98,fy,bot,S.gran,S.granTop):""}</g>
+      <rect x="34" y="42" width="72" height="108" rx="14" fill="none" stroke="#E2D9F0" stroke-width="3"/>
+      <rect x="30" y="22" width="80" height="22" rx="7" fill="#5B4B9E"/><rect x="40" y="16" width="60" height="10" rx="4" fill="#7160B8"/>
+      <rect x="40" y="58" width="60" height="24" rx="4" fill="#fff" opacity=".85"/>
+      ${moodFace(mood,"#2E2A33")}`);
+  }
+  if(S.shape==="capsule"){
+    const top=40,bot=150,h=bot-top,fh=h*pct,fy=bot-fh;
+    return svg(`<defs><clipPath id="cap"><rect x="40" y="${top}" width="60" height="${h}" rx="30"/></clipPath></defs>
+      <rect x="40" y="40" width="60" height="110" rx="30" fill="#fff" stroke="#E0D2C2" stroke-width="3"/>
+      <g clip-path="url(#cap)"><rect x="40" y="40" width="60" height="56" fill="#EE5A4F"/><rect id="jfill" x="40" y="${fy}" width="60" height="${fh+6}" fill="${S.fill}"/>${pct>0?granRows(48,92,fy,bot,S.gran,S.granTop):""}</g>
+      <rect x="40" y="40" width="60" height="110" rx="30" fill="none" stroke="#E0D2C2" stroke-width="3"/>
+      <line x1="40" y1="94" x2="100" y2="94" stroke="#E0D2C2" stroke-width="2.5"/>
+      ${moodFace(mood,"#2E2A33")}`);
+  }
+  if(S.shape==="shaker"){
+    const top=50,bot=150,h=bot-top,fh=h*pct,fy=bot-fh;
+    return svg(`<defs><clipPath id="sh"><rect x="36" y="${top}" width="68" height="${h}" rx="10"/></clipPath></defs>
+      <rect x="36" y="46" width="68" height="104" rx="14" fill="#2B2F38" stroke="#1C2026" stroke-width="3"/>
+      <g clip-path="url(#sh)"><rect id="jfill" x="36" y="${fy}" width="68" height="${fh+6}" fill="${S.fill}"/>${pct>0?granRows(44,96,fy,bot,S.gran,S.granTop):""}</g>
+      <rect x="36" y="46" width="68" height="104" rx="14" fill="none" stroke="#1C2026" stroke-width="3"/>
+      <rect x="32" y="26" width="76" height="22" rx="8" fill="#4A4F5A"/><rect x="44" y="18" width="52" height="12" rx="5" fill="#5E646F"/>
+      ${moodFace(mood,"#fff")}`);
+  }
+  // animals share an ellipse body
+  const fy=150-(96*pct);
+  const animal=(body,ears,ink,extra)=>svg(`<defs><clipPath id="an"><ellipse cx="70" cy="98" rx="46" ry="50"/></clipPath></defs>
+    ${ears}
+    <ellipse cx="70" cy="98" rx="46" ry="50" fill="${body}" stroke="rgba(0,0,0,.08)" stroke-width="3"/>
+    <g clip-path="url(#an)"><rect id="jfill" x="24" y="${fy}" width="92" height="${96*pct+6}" fill="${S.fill}" opacity=".55"/>${pct>0?granRows(40,98,fy,148,S.gran,S.granTop):""}</g>
+    <ellipse cx="70" cy="98" rx="46" ry="50" fill="none" stroke="rgba(0,0,0,.08)" stroke-width="3"/>
+    ${moodFace(mood,ink)}${extra||""}`);
+  if(S.shape==="bear")return animal("#C89A6A",
+    `<circle cx="40" cy="58" r="13" fill="#C89A6A"/><circle cx="100" cy="58" r="13" fill="#C89A6A"/><circle cx="40" cy="58" r="6" fill="#A77E50"/><circle cx="100" cy="58" r="6" fill="#A77E50"/>`,
+    "#2E2A33",`<ellipse cx="70" cy="106" rx="13" ry="10" fill="#E3CBA8"/>`);
+  if(S.shape==="cat")return animal("#F4B65C",
+    `<path d="M38 60 L34 36 L56 50 z" fill="#F4B65C"/><path d="M102 60 L106 36 L84 50 z" fill="#F4B65C"/><path d="M40 56 L39 44 L49 51 z" fill="#EE9AA0"/><path d="M100 56 L101 44 L91 51 z" fill="#EE9AA0"/>`,
+    "#2E2A33",`<path d="M48 96 h-14 M48 102 h-15 M92 96 h14 M92 102 h15" stroke="#C98A2E" stroke-width="2" stroke-linecap="round"/>`);
+  if(S.shape==="fox")return animal("#EE7B3C",
+    `<path d="M40 58 L32 30 L58 48 z" fill="#EE7B3C"/><path d="M100 58 L108 30 L82 48 z" fill="#EE7B3C"/><path d="M42 54 L38 38 L52 48 z" fill="#2E2A33"/><path d="M98 54 L102 38 L88 48 z" fill="#2E2A33"/>`,
+    "#2E2A33",`<path d="M44 118 q26 16 52 0 q-26 8 -52 0 z" fill="#fff" opacity=".8"/>`);
+  // fallback
+  return jarSVG(pct,size,mood,SKINS[0]);
+}
+function pourInto(container){
+  const svg=container.querySelector("#jarsvg");if(!svg)return;
+  const NS="http://www.w3.org/2000/svg";
+  const fillRect=svg.querySelector("#jfill");
+  const fy=fillRect?parseFloat(fillRect.getAttribute("y")):146;
+  for(let i=0;i<6;i++){
+    const c=document.createElementNS(NS,"circle");
+    c.setAttribute("cx",58+i*5+(i%3)*3);c.setAttribute("cy",40);c.setAttribute("r",3.4);
+    c.setAttribute("fill",currentSkin().fill);c.classList.add("pourdot");
+    c.style.setProperty("--fall",(fy-42)+"px");
+    c.style.animationDelay=(i*45)+"ms";
+    svg.appendChild(c);setTimeout(()=>c.remove(),700+i*45);
+  }
+  svg.classList.remove("jarbounce");void svg.offsetWidth;svg.classList.add("jarbounce");
+}
+function confettiBurst(el){
+  const r=el.getBoundingClientRect();const cols=["#EE5A4F","#F5A93B","#F2B6AD","#262A3F"];
+  for(let i=0;i<18;i++){
+    const d=document.createElement("div");d.className="confetti";
+    d.style.left=(r.left+r.width/2)+"px";d.style.top=(r.top+r.height/3)+"px";
+    d.style.background=cols[i%4];
+    d.style.setProperty("--dx",(Math.random()*220-110)+"px");
+    d.style.setProperty("--dy",(Math.random()*-180-40)+"px");
+    document.body.appendChild(d);setTimeout(()=>d.remove(),1200);
+  }
+}
+
+let celT=null;
+/* ---------- milestones (wired to wardrobe characters) ---------- */
+function totalGoodDays(){
+  let n=0;const tk=tkey();
+  for(const k in state.logs){if(k<=tk&&dayStats(k).good)n++;}
+  return n;
+}
+function hadPerfectWeek(){
+  const thisMon=mondayOf(today());
+  for(let w=1;w<=26;w++){
+    const ws=weekStats(dkey(addDays(thisMon,-7*w)));
+    if(ws.denom===0)break;
+    if(ws.good===7)return true;
+  }
+  return weekStats(dkey(thisMon)).good===7;
+}
+const MILESTONES=[
+  {id:"coach",need:()=>totalGoodDays()>=7,label:"7 good days",skin:"coach",line:"Coach Jack earned — 7 good days on the board 🏋️"},
+  {id:"wizard",need:()=>streakWeeks().streak>=4,label:"4-week streak",skin:"wizard",line:"Wizard Jack earned — a 4-week streak is proper magic 🧙"},
+  {id:"king",need:()=>hadPerfectWeek(),label:"a perfect week",skin:"king",line:"King Jack earned — a perfect 7-for-7 week 👑"}
+];
+function newMilestones(){
+  const got=state.profile.milestones||[];
+  return MILESTONES.filter(m=>!got.includes(m.id)&&m.need());
+}
+/* ---------- shareable summary card ---------- */
+function shareCardSheet(){
+  track("share_open");
+  const sk=streakWeeks();
+  const wk=weekStats(dkey(mondayOf(today())));
+  const pct=wk.days.filter(d=>!d.future&&d.denom>0).length?wk.good/7:0;
+  const dots=wk.days.map(d=>`<span class="scdot ${d.future?"fut":d.neutral?"neu":d.good?"good":"miss"}"></span>`).join("");
+  openSheet(`
+    <div class="sh-title center">My week with Jack</div>
+    <div class="sharecard" id="shareCard">
+      <div class="sc-jar">${jarSVG(Math.max(.15,wk.good/7),120,wk.good>=state.profile.weeklyTarget?"full":"mid")}</div>
+      <div class="sc-big">${wk.good} of 7 good days</div>
+      <div class="sc-dots">${dots}</div>
+      <div class="sc-streak">${sk.alive?"🔥":"🪵"} ${sk.streak} week streak${sk.freezes>0?" · ❄️ "+sk.freezes+" banked":""}</div>
+      <div class="sc-foot">Made with Jack and Pill 🫙</div>
+    </div>
+    <button class="btn" id="scShare" style="margin-top:14px">Share</button>
+    <p class="sub center" style="margin-top:10px;font-size:12.5px">Or screenshot the card and post it anywhere.</p>
+  `);
+  $("#scShare").onclick=async()=>{
+    track("share");
+    const txt=`My week with Jack: ${wk.good} of 7 good days, ${sk.streak}-week streak 🫙 — Made with Jack and Pill`;
+    try{
+      if(navigator.share){await navigator.share({text:txt});}
+      else if(navigator.clipboard){await navigator.clipboard.writeText(txt);toast("Copied — paste it anywhere");}
+      else toast("Screenshot the card to share it");
+    }catch(e){/* user cancelled share */}
+  };
+}
+function statsSheet(){
+  const ev=state.events||[];
+  const counts={};ev.forEach(x=>{const k=x.e.split(":")[0];counts[k]=(counts[k]||0)+1;});
+  const rows=Object.keys(counts).sort().map(k=>`<div class="statrow"><span>${esc(k)}</span><b>${counts[k]}</b></div>`).join("");
+  openSheet(`
+    <div class="sh-title">Tester stats</div>
+    <div class="sh-sub">A simple local count of what you've used — screenshot this when giving feedback. Nothing leaves your device.</div>
+    <div class="card" style="margin-top:10px">${rows||'<p class="sub">Nothing logged yet.</p>'}</div>
+    <p class="sub" style="margin-top:10px;font-size:12px">${ev.length} events total · milestones: ${(state.profile.milestones||[]).join(", ")||"none yet"}</p>
+  `);
+}
+function dismissCelebrate(){const c=$("#celebrate");if(c){c.classList.remove("on");}clearTimeout(celT);}
+function celebrate(){
+  const c=$("#celebrate");if(!c)return;
+  track("daydone");
+  // full jar, freshly rendered so it dances in the centre where the user is looking
+  $("#celJar").innerHTML=jarSVG(1,150,"full");
+  // milestone check — announce newly earned characters
+  const mile=$("#celMile");
+  if(mile){
+    const nm=newMilestones();
+    if(nm.length){
+      const m=nm[0];
+      (state.profile.milestones=state.profile.milestones||[]).push(m.id);
+      track("milestone:"+m.id);
+      mile.innerHTML=`<span class="cm-jar">${jarSVG(0.7,44,"full",skinById(m.skin))}</span> ${m.line}`;
+      mile.style.display="flex";
+      save();
+    }else mile.style.display="none";
+  }
+  c.classList.add("on");
+  const svg=$("#celJar").querySelector("#jarsvg");
+  if(svg){void svg.offsetWidth;svg.classList.add("jardance");}
+  confettiBurst($("#celJar"));
+  // confetti rain over the overlay
+  const cols=["#EE5A4F","#F5A93B","#F2B6AD","#262A3F","#8AC6A1"];
+  for(let i=0;i<54;i++){
+    const d=document.createElement("div");d.className="rain";
+    d.style.left=(Math.random()*100)+"vw";
+    d.style.background=cols[i%cols.length];
+    d.style.zIndex=71;
+    const sz=6+Math.random()*6;d.style.width=sz+"px";d.style.height=(sz*0.45+3)+"px";
+    d.style.animationDuration=(1.3+Math.random()*1.2)+"s";
+    d.style.animationDelay=(Math.random()*0.5)+"s";
+    d.style.setProperty("--sway",(Math.random()*120-60)+"px");
+    d.style.setProperty("--spin",(Math.random()*720-360)+"deg");
+    document.body.appendChild(d);setTimeout(()=>d.remove(),3400);
+  }
+  clearTimeout(celT);celT=setTimeout(dismissCelebrate,2600);
+}
+/* ---------- toast / sheet ---------- */
+let toastT=null;
+function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("on"),2400);}
+function openSheet(html){$("#sheet").innerHTML='<div class="grab"></div>'+html;$("#sheet").classList.add("on");$("#shade").classList.add("on");}
+function closeSheet(){$("#sheet").classList.remove("on");$("#shade").classList.remove("on");}
+$("#shade").addEventListener("click",closeSheet);
+$("#celebrate").addEventListener("click",dismissCelebrate);
+
+/* =================================================================
+   ONBOARDING
+   ================================================================= */
+const OB={step:0,age:null,goal:null,target:null,picks:null,picksGoal:null,demoDone:false,timer:null};
+const GOALS=[["💪","Training & recovery","training"],["⚡","Energy & focus","energy"],["😴","Sleep & calm","sleep"],["❤️","General health","health"]];
+const AGES=[["Under 30","u30"],["In my 30s","30s"],["In my 40s","40s"],["50 or over","50+"]];
+const TARGETS=[["Every day","Aim for 7 of 7",7,false],["5 of 7 days","Room for real life",5,true],["3 of 7 days","Gentle start",3,false]];
+const OB_STEPS=["splash","demo","streak","feel","frame","age","goal","target","loading","picks","addown","reminder","founder","done"];
+const Q_STEPS=["age","goal","target"];
+
+function goalLabel(g){const f=GOALS.find(x=>x[2]===g);return f?f[1].toLowerCase():"your goals";}
+function ageLabel(a){const f=AGES.find(x=>x[1]===a);return f?f[0].toLowerCase():"your age group";}
+
+let obDir=1;
+function obRender(){
+  clearTimeout(OB.timer);
+  if(typeof clearAddDemo==="function")clearAddDemo();
+  const name=OB_STEPS[OB.step];
+  const back=$("#obBack"),prog=$("#obProg");
+  const B=$("#obBody");
+  if(B){B.classList.remove("slide-fwd","slide-back");void B.offsetWidth;B.classList.add(obDir<0?"slide-back":"slide-fwd");}
+  const qi=Q_STEPS.indexOf(name);
+  back.classList.toggle("show",OB.step>0&&name!=="loading"&&name!=="done");
+  prog.classList.toggle("show",qi>=0);
+  if(qi>=0)prog.querySelector("i").style.width=((qi+1)/Q_STEPS.length*100)+"%";
+  const F=$("#obFoot");
+  F.innerHTML="";
+
+  if(name==="splash"){
+    B.innerHTML=`<div class="center">
+      <div class="glowwrap reveal" style="--i:0">
+        <div class="glow">${jarSVG(0.55,150,"zen")}</div>
+        <div class="groundshadow"></div>
+      </div>
+      <h1 class="reveal splash-h" style="--i:1;margin-top:30px">Meet Jack —<br>your supplement sidekick</h1>
+    </div>`;
+    F.innerHTML=`<button class="btn" id="obNext">Get started</button>`;
+    $("#obNext").onclick=()=>obGo(1);
+  }
+  else if(name==="demo"){
+    B.innerHTML=`<div class="center">
+      <div class="eyebrow reveal" style="--i:0">Try it</div>
+      <h1 class="reveal" style="--i:1">Log a dose with one tap</h1>
+      <p class="sub reveal" style="--i:2;margin-top:8px">${OB.demoDone?"That's the whole job. Ten seconds a day.":"Go on — tick off the creatine."}</p>
+      <div class="jar-wrap reveal" style="--i:3" id="demoJar">${jarSVG(OB.demoDone?1:0,150)}</div>
+      <div class="demo-row reveal" style="--i:4${OB.demoDone?";background:var(--blush)":""}" id="demoRow">
+        <span style="font-size:25px">⚡</span>
+        <div style="flex:1;text-align:left"><div style="font-weight:800;font-size:16px">Creatine</div><div style="font-size:13px;color:var(--ink-soft);font-weight:600">5 g</div></div>
+        <div class="ctl take" style="${OB.demoDone?"background:var(--coral);border-color:var(--coral);color:#fff":""}">✓</div>
+      </div>
+    </div>`;
+    F.innerHTML=`<button class="btn ${OB.demoDone?"":"dis"}" id="obNext">Continue</button>`;
+    $("#demoRow").onclick=()=>{
+      if(OB.demoDone)return;
+      OB.demoDone=true;
+      const jw=$("#demoJar");
+      pourInto(jw);
+      setTimeout(()=>{jw.innerHTML=jarSVG(1,150);pourEcho(jw);},420);
+      const row=$("#demoRow");row.style.background="var(--blush)";
+      const c=row.querySelector(".ctl");c.style.background="var(--coral)";c.style.borderColor="var(--coral)";c.style.color="#fff";
+      $("#obNext").classList.remove("dis");
+      const sub=B.querySelector(".sub");if(sub)sub.textContent="That's the whole job. Ten seconds a day.";
+    };
+    $("#obNext").onclick=()=>obGo(1);
+  }
+  else if(name==="streak"){
+    B.innerHTML=`<div class="center">
+      <div class="eyebrow reveal" style="--i:0">No guilt trips</div>
+      <h1 class="reveal" style="--i:1">A streak that forgives</h1>
+      <p class="sub reveal" style="--i:2;margin-top:8px;max-width:310px;margin-left:auto;margin-right:auto">You set a weekly target. Hit it and your streak lives — even if Tuesday got away from you.</p>
+      <div class="dotsrow reveal" style="--i:3">${DAYL.map((d,i)=>`<div class="d ${[0,1,3,4,6].includes(i)?"f":""}">${d}</div>`).join("")}</div>
+      <p class="reveal" style="--i:4;font-size:14px;font-weight:800;color:var(--amber-deep);margin-top:12px">5 of 7 — streak intact 🔥</p>
+    </div>`;
+    F.innerHTML=`<button class="btn" id="obNext">Continue</button>`;
+    $("#obNext").onclick=()=>obGo(1);
+  }
+  else if(name==="feel"){
+    B.innerHTML=`<div class="center">
+      <div class="eyebrow reveal" style="--i:0">The payoff</div>
+      <h1 class="reveal" style="--i:1">Find what actually works</h1>
+      <p class="sub reveal" style="--i:2;margin-top:8px;max-width:310px;margin-left:auto;margin-right:auto">One question every Sunday: how did you feel? Over the weeks, Jack connects your best weeks to what you took.</p>
+      <div class="reveal" style="--i:3;display:flex;gap:10px;justify-content:center;margin-top:18px">
+        ${[["😊","92%"],["🙂","71%"],["😴","45%"]].map(x=>`<div style="background:var(--card);border-radius:18px;padding:14px 16px;box-shadow:0 3px 12px rgba(46,42,51,.06)"><div style="font-size:28px">${x[0]}</div><div style="font-size:13px;font-weight:800;margin-top:5px;color:var(--ink-mid)">${x[1]}</div></div>`).join("")}
+      </div>
+    </div>`;
+    F.innerHTML=`<button class="btn" id="obNext">Continue</button>`;
+    $("#obNext").onclick=()=>obGo(1);
+  }
+  else if(name==="frame"){
+    B.innerHTML=`<div class="center">
+      <div class="jar-wrap reveal" style="--i:0">${jarSVG(0.35,130)}</div>
+      <h1 class="reveal" style="--i:1">Three quick questions</h1>
+      <p class="sub reveal" style="--i:2;margin-top:8px;max-width:300px;margin:8px auto 0">Your answers shape your starter stack and your weekly target. No account, no email.</p>
+    </div>`;
+    F.innerHTML=`<button class="btn" id="obNext">Let's go</button>`;
+    $("#obNext").onclick=()=>obGo(1);
+  }
+  else if(name==="age"){
+    B.innerHTML=`<h1 class="reveal" style="--i:0">How far into the journey are you?</h1>
+      <p class="sub reveal" style="--i:1;margin-top:6px">Needs shift with age — this tunes your picks.</p>
+      <div style="margin-top:14px">${AGES.map((a,i)=>`<button class="opt reveal" style="--i:${i+2}" data-v="${a[1]}">${a[0]}</button>`).join("")}</div>`;
+    B.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{OB.age=b.dataset.v;selOnly(b);setTimeout(()=>obGo(1),240);});
+    markSel(B,OB.age);
+  }
+  else if(name==="goal"){
+    B.innerHTML=`<h1 class="reveal" style="--i:0">What's the main goal?</h1>
+      <div style="margin-top:14px">${GOALS.map((g,i)=>`<button class="opt reveal" style="--i:${i+1}" data-v="${g[2]}"><span class="em">${g[0]}</span>${g[1]}</button>`).join("")}</div>`;
+    B.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{OB.goal=b.dataset.v;selOnly(b);setTimeout(()=>obGo(1),240);});
+    markSel(B,OB.goal);
+  }
+  else if(name==="target"){
+    B.innerHTML=`<h1 class="reveal" style="--i:0">How many days a week feels realistic?</h1>
+      <p class="sub reveal" style="--i:1;margin-top:6px">This sets your streak target. You can change it any time.</p>
+      <div style="margin-top:14px">${TARGETS.map((t,i)=>`<button class="opt reveal ${t[3]?"rec":""}" style="--i:${i+2}" data-v="${t[2]}"><div>${t[0]}<small>${t[1]}</small></div><span class="tail">Popular</span></button>`).join("")}</div>`;
+    B.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{OB.target=+b.dataset.v;selOnly(b);setTimeout(()=>obGo(1),240);});
+    markSel(B,OB.target);
+  }
+  else if(name==="loading"){
+    B.innerHTML=`<div class="center">
+      <div class="loadjar" id="loadJar">${jarSVG(0,150,"zero")}</div>
+      <h2>Sorting your options…</h2>
+      <p class="sub" style="margin:6px 0 16px">Finding what people focused on ${goalLabel(OB.goal)} take most, ${ageLabel(OB.age)}</p>
+      <div class="fact" id="factBox">${FACTS[0]}</div>
+    </div>`;
+    let pct=0,fi=0;const t0=Date.now(),FACT_MS=2400;
+    const tick=()=>{
+      pct=Math.min(100,pct+1+Math.ceil(Math.random()*2));
+      const f=pct/100;
+      const mood=pct>=100?"full":pct>0?"mid":"zero";
+      $("#loadJar").innerHTML=jarSVG(f,150,mood);
+      const want=Math.min(FACTS.length-1,Math.floor((Date.now()-t0)/FACT_MS));
+      if(want!==fi){fi=want;const fb=$("#factBox");fb.style.opacity=0;setTimeout(()=>{fb.innerHTML=FACTS[fi];fb.style.opacity=1;},180);}
+      if(pct>=100){const j=$("#loadJar");if(j){const svg=j.querySelector("#jarsvg");if(svg){void svg.offsetWidth;svg.classList.add("jarbounce");}}OB.timer=setTimeout(()=>obGo(1),750);}
+      else OB.timer=setTimeout(tick,230);
+    };
+    OB.timer=setTimeout(tick,350);
+  }
+  else if(name==="picks"){
+    if(!OB.picks||OB.picksGoal!==OB.goal){OB.picks=buildPicks(OB.goal);OB.picksGoal=OB.goal;}
+    B.innerHTML=`<div class="eyebrow reveal" style="--i:0">Build your stack</div>
+      <h1 class="reveal" style="--i:1">What's already in your routine?</h1>
+      <p class="sub reveal" style="--i:2;margin-top:6px">Tap everything you currently take — the most common for ${goalLabel(OB.goal)} are up top. You can add your own later.</p>
+      <div class="pick reveal" style="--i:3;border:2px solid var(--line);box-shadow:none">
+        <span class="em">🔢</span>
+        <div><div class="nm" style="font-size:15px">Show doses</div><div class="ds">Typical amounts, fully editable</div></div>
+        <div class="tog ${state.profile.showDoses!==false?"on":""}" id="pickDoses"><i></i></div>
+      </div>
+      <div style="margin-top:6px" id="pickList">
+        ${OB.picks.map((s,i)=>`<div class="pick reveal" style="--i:${Math.min(i+4,10)}">
+          <span class="em">${s.emoji}</span>
+          <div><div class="nm">${esc(s.name)}</div>${(()=>{const ps=[state.profile.showDoses!==false?esc(s.dose)+" "+esc(s.unit):"",s.wf?"🍽️ with food":""].filter(Boolean).join(" · ");return ps?`<div class="ds">${ps}</div>`:"";})()}</div>
+          ${s.pop?'<span class="poptag">Popular</span>':""}
+          <div class="tog ${s.on?"on":""}" data-i="${i}"><i></i></div>
+        </div>`).join("")}
+      </div>`;
+    B.querySelectorAll(".tog[data-i]").forEach(t=>t.onclick=()=>{const i=+t.dataset.i;OB.picks[i].on=!OB.picks[i].on;t.classList.toggle("on",OB.picks[i].on);});
+    $("#pickDoses").onclick=()=>{state.profile.showDoses=!(state.profile.showDoses!==false);save();obRender();};
+    F.innerHTML=`<button class="btn" id="obNext">That's my stack</button>`;
+    $("#obNext").onclick=()=>{
+      if(!OB.picks.some(p=>p.on)){toast("Tap at least one thing you take");return;}
+      obGo(1);
+    };
+  }
+  else if(name==="addown"){
+    B.innerHTML=`<div class="center">
+      <div class="eyebrow reveal" style="--i:0">Your stack, your rules</div>
+      <h1 class="reveal" style="--i:1">Taking something that's<br>not on the list?</h1>
+      <p class="sub reveal" style="--i:2;margin-top:8px;max-width:300px;margin-left:auto;margin-right:auto">Add anything in a couple of taps — supplements, powders, prescriptions, whatever you take.</p>
+      <div class="phonemock reveal" style="--i:3" id="addMock">${addDemoMarkup()}</div>
+    </div>`;
+    F.innerHTML=`<button class="btn" id="obNext">Got it</button>`;
+    startAddDemo();
+    $("#obNext").onclick=()=>obGo(1);
+  }
+  else if(name==="reminder"){
+    B.innerHTML=`<div class="center">
+      <div class="eyebrow reveal" style="--i:0">Make it a habit</div>
+      <h1 class="reveal" style="--i:1">When should the nudge arrive?</h1>
+      <p class="sub reveal" style="--i:2;margin-top:8px;max-width:300px;margin:8px auto 0">One reminder per day, not one per pill. Push reminders arrive in the App Store version — your time is saved and ready.</p>
+      <div class="timepick reveal" style="--i:3"><input type="time" id="remTime" value="${state.profile.reminderTime}" tabindex="-1"></div>
+    </div>`;
+    F.innerHTML=`<button class="btn" id="obNext">Save my time</button>`;
+    $("#obNext").onclick=()=>{const v=$("#remTime").value;if(v)state.profile.reminderTime=v;obGo(1);};
+  }
+  else if(name==="founder"){
+    B.innerHTML=`<div class="center">
+      <div class="eyebrow reveal" style="--i:0">Early tester perk</div>
+      <h1 class="reveal" style="--i:1">Pro is coming.<br>You get it free. Forever.</h1>
+      <p class="sub reveal" style="--i:2;margin-top:8px;max-width:310px;margin:8px auto 0">Jack and Pill Pro will bring feel-insights, the full wardrobe and every future feature — one-time unlock, no subscription. As an early tester, yours is free for life.</p>
+      <div class="founderbadge reveal" style="--i:3">🫙 Founding Tester</div>
+    </div>`;
+    F.innerHTML=`<button class="btn" id="obNext">Claim founder access</button>`;
+    $("#obNext").onclick=()=>{state.profile.founder=true;track("founder_claim");save();toast("Founder access locked in 🫙");obGo(1);};
+  }
+  else if(name==="done"){
+    // commit everything
+    state.profile.age=OB.age||"30s";
+    state.profile.goal=OB.goal||"health";
+    state.profile.weeklyTarget=OB.target||5;
+    const tk=tkey();
+    state.supps=OB.picks.filter(p=>p.on).map((p,i)=>({
+      id:"s"+Date.now().toString(36)+i,name:p.name,emoji:p.emoji,dose:p.dose,unit:p.unit,
+      slot:p.slot,freq:p.freq,days:[],paused:false,withFood:!!p.wf,order:i,created:tk
+    }));
+    state.onboarded=true;track("ob_done");save();
+    B.innerHTML=`<div class="center">
+      <div class="jar-wrap reveal" style="--i:0" id="doneJar">${jarSVG(1,190)}</div>
+      <h1 class="reveal" style="--i:1">Jack’s ready to go</h1>
+      <p class="sub reveal" style="--i:2;margin-top:8px">${OB.goal?"Built around "+goalLabel(OB.goal)+" — ":""}Every dose you log pours granules in. Fill it, feel smug, repeat.</p>
+    </div>`;
+    F.innerHTML=`<button class="btn" id="obNext">Start tracking</button>`;
+    setTimeout(()=>{const j=$("#doneJar");if(j)confettiBurst(j);},500);
+    $("#obNext").onclick=()=>{
+      enterApp();
+    };
+  }
+}
+function pourEcho(jw){pourInto(jw);}
+function addDemoMarkup(){
+  return `<div class="pm-screen">
+    <div class="pm-head">＋ Add supplement</div>
+    <div class="pm-field" id="pmName"><span class="pm-lbl">Name</span><span class="pm-val" id="pmNameV"></span><span class="pm-cursor" id="pmCur"></span></div>
+    <div class="pm-row">
+      <div class="pm-field pm-half" id="pmDose"><span class="pm-lbl">Dose</span><span class="pm-val" id="pmDoseV"></span></div>
+      <div class="pm-field pm-half" id="pmUnit"><span class="pm-lbl">Unit</span><span class="pm-val" id="pmUnitV"></span></div>
+    </div>
+    <button class="pm-btn" id="pmBtn">Add to stack</button>
+    <div class="pm-list" id="pmList"></div>
+  </div>`;
+}
+let addDemoTimers=[];
+function clearAddDemo(){addDemoTimers.forEach(t=>clearTimeout(t));addDemoTimers=[];}
+function startAddDemo(){
+  clearAddDemo();
+  const T=(fn,ms)=>addDemoTimers.push(setTimeout(fn,ms));
+  const run=()=>{
+    const nameV=$("#pmNameV"),doseV=$("#pmDoseV"),unitV=$("#pmUnitV"),btn=$("#pmBtn"),list=$("#pmList"),cur=$("#pmCur");
+    if(!nameV)return; // screen left
+    // reset
+    nameV.textContent="";doseV.textContent="";unitV.textContent="";list.innerHTML="";list.classList.remove("show");
+    btn.classList.remove("press");$("#pmName").classList.add("focus");if(cur)cur.style.display="inline-block";
+    const word="Tart Cherry";
+    let i=0;
+    const type=()=>{
+      if(i<=word.length){nameV.textContent=word.slice(0,i);i++;T(type,75);}
+      else{
+        if(cur)cur.style.display="none";$("#pmName").classList.remove("focus");
+        T(()=>{$("#pmDose").classList.add("focus");doseV.textContent="500";$("#pmDose").classList.remove("focus");},480);
+        T(()=>{$("#pmUnit").classList.add("focus");unitV.textContent="mg";$("#pmUnit").classList.remove("focus");},920);
+        T(()=>{btn.classList.add("press");},1500);
+        T(()=>{
+          btn.classList.remove("press");
+          list.innerHTML=`<div class="pm-item"><span>🍒</span><div><b>Tart Cherry</b><i>500 mg</i></div><span class="pm-check">✓</span></div>`;
+          list.classList.add("show");
+        },1750);
+        T(run,4200); // loop
+      }
+    };
+    T(type,650);
+  };
+  run();
+}
+function selOnly(b){b.parentElement.querySelectorAll(".opt").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");}
+function markSel(B,val){if(val===null||val===undefined)return;B.querySelectorAll(".opt").forEach(x=>{if(x.dataset.v==String(val))x.classList.add("sel");});}
+function obGo(dir){
+  obDir=dir<0?-1:1;
+  OB.step=Math.max(0,Math.min(OB_STEPS.length-1,OB.step+dir));
+  // skip back over loading screen
+  if(dir<0&&OB_STEPS[OB.step]==="loading")OB.step--;
+  obRender();
+}
+$("#obBack").addEventListener("click",()=>obGo(-1));
+
+/* =================================================================
+   MAIN APP
+   ================================================================= */
+function enterApp(){
+  $("#ob").classList.remove("on");
+  $("#app").classList.add("on");
+  // ensure Today is the visible page on first entry (tabs default to Today)
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("on"));
+  $("#pgToday").classList.add("on");
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));
+  document.querySelector('.tab[data-pg="Today"]').classList.add("on");
+  renderAll();
+  maybeCheckinPrompt();
+}
+document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));t.classList.add("on");
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("on"));
+  $("#pg"+t.dataset.pg).classList.add("on");
+  renderPage(t.dataset.pg);
+}));
+function renderPage(pg){
+  if(pg==="Today")renderToday();
+  else if(pg==="Stack")renderStack();
+  else if(pg==="Weeks")renderWeeks();
+}
+function renderAll(){renderToday();renderStack();renderWeeks();}
+
+/* ---------- TODAY ---------- */
+const SLOTS=[["morning","Morning"],["lunch","Lunch"],["evening","Evening"],["anytime","Anytime"]];
+function renderToday(){
+  const tk=tkey();const log=state.logs[tk]||{};
+  const ds=dayStats(tk);
+  const sk=streakWeeks();
+  const asn=sorted(state.supps.filter(s=>!s.paused&&s.freq==="asneeded"));
+  const active=state.supps.filter(s=>dueOn(s,tk));
+  const fullPct=ds.denom?ds.taken/ds.denom:0;
+  const done=ds.denom>0&&ds.taken===ds.denom;
+
+  let rows="";
+  for(const [slot,label] of SLOTS){
+    const items=sorted(active.filter(s=>s.slot===slot));
+    if(!items.length)continue;
+    rows+=`<div class="sect"><h3>${label}</h3>${items.map(s=>rowsForSupp(s,log)).join("")}</div>`;
+  }
+  if(asn.length){
+    rows+=`<div class="sect"><h3>As needed</h3>${asn.map(s=>rowHTML(s,s.id,log[s.id],true)).join("")}</div>`;
+  }
+  if(!rows){
+    rows=`<div class="empty"><div class="big">🫙</div><h2>Nothing in the stack yet</h2><p class="sub" style="margin-top:6px">Add a supplement from the Stack tab to get going.</p></div>`;
+  }
+
+  const wk=weekStats(dkey(mondayOf(today())));
+  const todayIdx=(today().getDay()+6)%7;
+  const dots=wk.days.map((d,i)=>{
+    let cls="wd";
+    if(d.future)cls+=" future";
+    else if(d.good)cls+=" good";
+    else if(d.pct>0)cls+=" part";
+    if(i===todayIdx)cls+=" today";
+    return `<div class="${cls}"><div class="c">${d.good?"✓":""}</div>${DAYL[i]}</div>`;
+  }).join("");
+
+  $("#pgToday").innerHTML=`
+    <div class="apphead">
+      <div><div class="date">${fmtDate(today())}</div><h1>Today</h1></div>
+      <div class="streakpill"><span class="fl">${sk.alive?"🔥":"🪵"}</span>${sk.streak} wk</div>
+    </div>
+    <div class="jarhero" id="heroJar">${jarSVG(fullPct,168)}
+      <button class="jartap" id="jarTap" aria-label="Change Jack">👕 Dress Jack</button>
+      <div class="jarsum">${ds.denom?`<b>${ds.taken}</b> of <b>${ds.denom}</b> taken${done?" — day done 🎉":""}`:"No scheduled doses today"}</div>
+    </div>
+    <div class="weekdots">${dots}</div>
+    <div style="text-align:center;font-size:12.5px;font-weight:800;color:var(--ink-soft)">${wk.good} of ${state.profile.weeklyTarget} good days this week</div>
+    <div id="checkinSlot"></div>
+    <div id="lowStockSlot"></div>
+    <div id="founderSlot"></div>
+    ${rows}`;
+
+  // wire rows
+  const jt=$("#jarTap");if(jt)jt.onclick=(e)=>{e.stopPropagation();wardrobeSheet();};
+  $("#pgToday").querySelectorAll("[data-take]").forEach(el=>{
+    el.addEventListener("click",e=>{e.stopPropagation();toggleTake(el.dataset.take);});
+  });
+  $("#pgToday").querySelectorAll("[data-skip]").forEach(el=>{
+    el.addEventListener("click",e=>{e.stopPropagation();skipSheet(el.dataset.skip);});
+  });
+  $("#pgToday").querySelectorAll(".row[data-rid]").forEach(el=>{
+    el.addEventListener("click",()=>toggleTake(el.dataset.rid));
+  });
+  renderCheckinBanner();
+  renderLowStock();
+  renderFounderBanner();
+}
+function renderFounderBanner(){
+  const slot=$("#founderSlot");if(!slot)return;
+  if(state.profile.founder){slot.innerHTML="";return;}
+  slot.innerHTML=`<div class="lowbanner" style="background:#EEF4FF;border-color:#B9CFF2">
+    <span class="lbic">🫙</span>
+    <div class="tx" style="color:#2E4A7A">Early tester perk: Pro free forever when it launches.</div>
+    <button class="founderclaim" id="founderClaim">Claim</button>
+  </div>`;
+  $("#founderClaim").onclick=()=>{state.profile.founder=true;track("founder_claim");save();renderFounderBanner();toast("Founder access locked in 🫙");};
+}
+function lowStockItems(){
+  return state.supps.filter(s=>!s.paused&&s.trackStock&&typeof s.stock==="number"&&s.stock<=(s.lowAt??7));
+}
+function renderLowStock(){
+  const slot=$("#lowStockSlot");if(!slot)return;
+  const low=lowStockItems();
+  if(!low.length){slot.innerHTML="";return;}
+  const out=low.filter(s=>s.stock<=0);
+  const names=low.map(s=>esc(s.name)).join(", ");
+  const msg=out.length
+    ? `You're out of ${out.map(s=>esc(s.name)).join(", ")} — time to restock 📦`
+    : `Running low on ${names} — might be worth restocking soon 📦`;
+  slot.innerHTML=`<div class="lowbanner"><span class="lbic">📦</span><div class="tx">${msg}</div></div>`;
+}
+function rowsForSupp(s,log){
+  const keys=doseKeys(s);
+  if(keys.length===1)return rowHTML(s,s.id,log[s.id]);
+  return keys.map((k,i)=>rowHTML(s,k,log[k],false,`Dose ${i+1} of ${keys.length}`)).join("");
+}
+function rowHTML(s,dkey,entry,asneeded,doseLabel){
+  const taken=entry&&entry.s==="taken";
+  const skipped=entry&&entry.s==="skipped";
+  const notNeeded=skipped&&entry.r==="Not needed today";
+  const meta=[doseLabel||"",doseText(s),s.withFood?"🍽️ with food":""].filter(Boolean).join(" · ");
+  const chip=skipped?(notNeeded?`<span class="chip ok">Not needed today ✓</span>`:`<span class="chip">Skipped · ${esc(entry.r||"")}</span>`):"";
+  return `<div class="row ${taken?"taken":""} ${skipped?"skipped":""} ${notNeeded?"notneeded":""}" data-rid="${dkey}">
+    <span class="em">${s.emoji}</span>
+    <div class="info"><div class="nm">${esc(s.name)}</div>${meta?`<div class="ds">${meta}</div>`:""}
+    ${chip}</div>
+    ${!taken&&!asneeded?`<button class="ctl skip" data-skip="${dkey}" aria-label="Skip">✕</button>`:""}
+    <button class="ctl take" data-take="${dkey}" aria-label="Take">✓</button>
+  </div>`;
+}
+function toggleTake(id){
+  const tk=tkey();
+  track("take_toggle");
+  if(!state.logs[tk])state.logs[tk]={};
+  const log=state.logs[tk];
+  const before=dayStats(tk);
+  const supp=state.supps.find(x=>x.id===baseId(id));
+  if(log[id]&&log[id].s==="taken"){
+    // only restore stock if this take actually decremented it
+    if(supp&&supp.trackStock&&typeof supp.stock==="number"&&log[id].dec)supp.stock+=1;
+    delete log[id];
+  }else{
+    let dec=false;
+    if(supp&&supp.trackStock&&typeof supp.stock==="number"&&supp.stock>0){supp.stock-=1;dec=true;}
+    log[id]={s:"taken",t:Date.now(),dec};
+  }
+  save();
+  const wasTaken=!log[id];
+  renderToday();
+  if(!wasTaken){ // just took it
+    const jw=$("#heroJar");if(jw)pourInto(jw);
+    const after=dayStats(tk);
+    if(after.denom>0&&after.taken===after.denom&&before.taken!==before.denom){
+      setTimeout(celebrate,300);
+    }
+  }
+}
+function skipSheet(dkey){
+  const s=state.supps.find(x=>x.id===baseId(dkey));if(!s)return;
+  openSheet(`
+    <div class="sh-title">Skip ${esc(s.name)} today?</div>
+    <div class="sh-sub">No judgement. A reason keeps your history honest.</div>
+    ${SKIP_REASONS.map(r=>`<button class="opt" data-r="${r[1]}"><span class="em">${r[0]}</span>${r[1]}</button>`).join("")}
+    <button class="btn ghost" id="skCancel" style="margin-top:10px">Cancel</button>
+  `);
+  $("#sheet").querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+    const tk=tkey();if(!state.logs[tk])state.logs[tk]={};
+    const before=dayStats(tk);
+    state.logs[tk][dkey]={s:"skipped",r:b.dataset.r,t:Date.now()};track("skip");
+    save();closeSheet();renderToday();
+    // if marking this not-needed just completed the day, celebrate
+    const after=dayStats(tk);
+    if(after.denom>0&&after.taken===after.denom&&!(before.denom>0&&before.taken===before.denom)){
+      setTimeout(celebrate,300);
+    }
+  });
+  $("#skCancel").onclick=closeSheet;
+}
+
+/* ---------- check-in ---------- */
+// how many dose entries (taken + skipped) were logged across a Mon..Sun week
+function loggedInWeek(monKey){
+  const mon=fromKey(monKey);let n=0;
+  for(let i=0;i<7;i++){const l=state.logs[dkey(addDays(mon,i))];if(l)n+=Object.keys(l).length;}
+  return n;
+}
+function lastWeekCandidate(){
+  // most recent completed week (Mon..Sun before this week) that was due, after first use, not checked in
+  const lastMon=dkey(addDays(mondayOf(today()),-7));
+  if(state.checkins[lastMon])return null;
+  const fu=firstUseKey();
+  if(!fu||lastMon<dkey(mondayOf(fromKey(fu))))return null;
+  if(weekStats(lastMon).denom===0)return null;
+  return lastMon;
+}
+function pendingCheckinWeek(){
+  // a feel check-in only makes sense for a week with real logging
+  const wk=lastWeekCandidate();
+  return wk&&loggedInWeek(wk)>0?wk:null;
+}
+function pendingWelcomeBack(){
+  // a lapsed week (nothing logged): welcome them back once, never show a report card
+  const wk=lastWeekCandidate();
+  if(!wk||loggedInWeek(wk)>0)return null;
+  return (state.profile.welcomed||[]).includes(wk)?null:wk;
+}
+function renderCheckinBanner(){
+  const slot=$("#checkinSlot");if(!slot)return;
+  const wk=pendingCheckinWeek();
+  slot.innerHTML=wk?`<div class="banner"><div class="tx">Sunday's gone — how was last week?</div><button class="go" id="ciGo">10-sec check-in</button></div>`:"";
+  if(wk)$("#ciGo").onclick=()=>checkinSheet(wk);
+}
+function maybeCheckinPrompt(){
+  const wb=pendingWelcomeBack(),wk=pendingCheckinWeek();
+  if(!wb&&!wk)return;
+  // guard: never steal a sheet the user already has open
+  setTimeout(()=>{if(!$("#sheet").classList.contains("on")){if(wb)welcomeBackSheet(wb);else checkinSheet(wk);}},800);
+}
+function welcomeBackSheet(monKey){
+  // record "seen" on open, so it shows once only however it is dismissed; no feel score saved
+  const w=state.profile.welcomed=state.profile.welcomed||[];
+  if(!w.includes(monKey)){w.push(monKey);if(w.length>60)state.profile.welcomed=w.slice(-52);}
+  save();track("welcome_back");
+  openSheet(`
+    <div class="center" style="margin:6px 0 4px">${jarSVG(0.25,110)}</div>
+    <div class="sh-title center">Welcome back.</div>
+    <div class="sh-sub center">Fresh week, fresh jar.</div>
+    <div style="margin-top:18px"><button class="btn" id="wbGo">Let's go</button></div>
+  `);
+  $("#wbGo").onclick=()=>{closeSheet();renderAll();};
+}
+const FEELS=["😞","😕","😐","🙂","😄"];
+function checkinSheet(monKey){
+  // a week with nothing logged never gets a report card
+  if(loggedInWeek(monKey)===0){welcomeBackSheet(monKey);return;}
+  const ws=weekStats(monKey);
+  const met=ws.good>=state.profile.weeklyTarget;
+  const loggedDays=ws.days.filter(d=>!d.future&&state.logs[d.k]&&Object.keys(state.logs[d.k]).length).length;
+  const lead=met
+    ?`You hit <b>${ws.good}</b> good day${ws.good===1?"":"s"} (target ${state.profile.weeklyTarget}) and took <b>${ws.pct}%</b> of your doses.`
+    :ws.good>0
+      ?`You had <b>${ws.good}</b> good day${ws.good===1?"":"s"} last week.`
+      :`You logged on <b>${loggedDays}</b> day${loggedDays===1?"":"s"} last week. Jack noticed.`;
+  let feel=0;
+  openSheet(`
+    <div class="sh-title">Week of ${fmtShort(fromKey(monKey))}</div>
+    <div class="sh-sub">${lead}</div>
+    <div class="f-label">How did you feel overall?</div>
+    <div class="feelrow">${FEELS.map((f,i)=>`<button data-f="${i+1}">${f}</button>`).join("")}</div>
+    <div class="f-label">Anything worth noting? <span style="text-transform:none;font-weight:600">(optional)</span></div>
+    <input class="f-input" id="ciNote" placeholder="Slept better, heavy week at the club…" maxlength="120">
+    <div style="margin-top:18px"><button class="btn dis" id="ciSave">Save check-in</button></div>
+  `);
+  $("#sheet").querySelectorAll(".feelrow button").forEach(b=>b.onclick=()=>{
+    feel=+b.dataset.f;
+    $("#sheet").querySelectorAll(".feelrow button").forEach(x=>x.classList.remove("sel"));
+    b.classList.add("sel");$("#ciSave").classList.remove("dis");
+  });
+  $("#ciSave").onclick=()=>{
+    if(!feel)return;
+    state.checkins[monKey]={feel,note:$("#ciNote").value.trim(),pct:ws.pct,good:ws.good};
+    save();closeSheet();toast("Check-in saved");renderAll();
+  };
+}
+
+/* ---------- drag to reorder ---------- */
+let dragMoved=false;
+function startDrag(ev,row){
+  ev.preventDefault();
+  dragMoved=false;
+  const rows=[...$("#pgStack").querySelectorAll('.row[data-act="1"]')];
+  const idx=rows.indexOf(row);if(idx<0)return;
+  const rh=row.offsetHeight+10;
+  let target=idx;
+  const startY=ev.clientY;
+  row.style.position="relative";row.style.zIndex=5;
+  row.style.boxShadow="0 12px 28px rgba(46,42,51,.2)";row.style.transition="none";
+  const move=e=>{
+    const dy=e.clientY-startY;
+    if(Math.abs(dy)>4)dragMoved=true;
+    row.style.transform=`translateY(${dy}px) scale(1.02)`;
+    let t=Math.max(0,Math.min(rows.length-1,idx+Math.round(dy/rh)));
+    if(t!==target){
+      target=t;
+      rows.forEach((r,i)=>{
+        if(r===row)return;
+        let sh=0;
+        if(idx<target&&i>idx&&i<=target)sh=-rh;
+        else if(idx>target&&i>=target&&i<idx)sh=rh;
+        r.style.transition="transform .15s";
+        r.style.transform=sh?`translateY(${sh}px)`:"";
+      });
+    }
+  };
+  const up=()=>{
+    document.removeEventListener("pointermove",move);
+    document.removeEventListener("pointerup",up);
+    document.removeEventListener("pointercancel",up);
+    if(target!==idx){
+      const ids=rows.map(r=>r.dataset.rid);
+      const movedId=ids.splice(idx,1)[0];
+      ids.splice(target,0,movedId);
+      ids.forEach((id,i)=>{const s=state.supps.find(x=>x.id===id);if(s)s.order=i;});
+      let n=ids.length;
+      sorted(state.supps.filter(s=>s.paused)).forEach(s=>{s.order=n++;});
+      save();
+    }
+    renderStack();renderToday();
+    setTimeout(()=>{dragMoved=false;},60);
+  };
+  document.addEventListener("pointermove",move);
+  document.addEventListener("pointerup",up);
+  document.addEventListener("pointercancel",up);
+}
+
+/* ---------- STACK ---------- */
+function renderStack(){
+  const act=sorted(state.supps.filter(s=>!s.paused));
+  const paused=sorted(state.supps.filter(s=>s.paused));
+  $("#pgStack").innerHTML=`
+    <div class="apphead">
+      <div><div class="date">Manage</div><h1>Your stack</h1></div>
+      <button class="gear" id="gearBtn">⚙️</button>
+    </div>
+    ${act.length?act.map(s=>stackRow(s)).join(""):`<div class="empty"><div class="big">💊</div><h2>Stack's empty</h2><p class="sub" style="margin-top:6px">Add your first supplement below.</p></div>`}
+    ${paused.length?`<div class="sect"><h3>Paused</h3>${paused.map(s=>stackRow(s)).join("")}</div>`:""}
+    <button class="addbtn" id="addBtn">＋ Add supplement</button>`;
+  $("#pgStack").querySelectorAll(".row").forEach(el=>el.addEventListener("click",()=>{if(dragMoved)return;editSheet(el.dataset.rid);}));
+  $("#pgStack").querySelectorAll(".handle").forEach(h=>{
+    h.addEventListener("click",e=>e.stopPropagation());
+    h.addEventListener("pointerdown",e=>startDrag(e,h.closest(".row")));
+  });
+  $("#addBtn").onclick=()=>editSheet(null);
+  $("#gearBtn").onclick=settingsSheet;
+}
+function showDoses(){return state.profile.showDoses!==false;}
+function doseText(s){const d=String(s.dose||"").trim();return showDoses()&&d?esc(d)+" "+esc(s.unit):"";}
+function freqLabel(s){
+  if(s.freq==="asneeded")return "As needed";
+  if(s.freq==="custom")return (s.days||[]).map(d=>DAYL[d]).join(" ")||"No days set";
+  return "Daily";
+}
+function stackRow(s){
+  const lowThresh=s.lowAt??7;
+  const stockChip=(s.trackStock&&typeof s.stock==="number")
+    ? `<span class="stockchip ${s.stock<=lowThresh?"low":""}">${s.stock<=0?"Out":s.stock+" left"}</span>` : "";
+  return `<div class="row" data-rid="${s.id}" ${s.paused?"":'data-act="1"'}>
+    ${s.paused?"":`<span class="handle" data-h="${s.id}">≡</span>`}
+    <span class="em">${s.emoji}</span>
+    <div class="info"><div class="nm">${esc(s.name)}</div><div class="ds">${[doseText(s),(timesOf(s)>1?timesOf(s)+"× ":"")+freqLabel(s),s.slot,s.withFood?"🍽️":""].filter(Boolean).join(" · ")}</div></div>
+    ${stockChip}
+    ${s.paused?'<span class="pausetag">Paused</span>':""}
+    <span class="arr">›</span>
+  </div>`;
+}
+function editSheet(id){
+  const isNew=!id;
+  const s=isNew?{name:"",emoji:"💊",dose:"1",unit:"capsule",slot:"morning",freq:"daily",days:[],paused:false,withFood:false}
+               :(()=>{const f=state.supps.find(x=>x.id===id);return f?{...f,days:[...(f.days||[])],withFood:!!f.withFood}:{};})();
+  if(!isNew&&!s.id)return;
+  openSheet(`
+    <div class="sh-title">${isNew?"Add supplement":"Edit "+esc(s.name)}</div>
+    ${isNew?`<div class="f-label">Quick pick <span style="text-transform:none;font-weight:600">(fills in typical dose)</span></div><div class="chips">${QUICK.map((q,i)=>`<button class="chipbtn" data-q="${i}">${q.n}</button>`).join("")}</div>`:""}
+    <div class="f-label">Name</div>
+    <input class="f-input" id="fName" value="${esc(s.name)}" placeholder="e.g. Creatine" maxlength="30">
+    <div class="f-label">Icon</div>
+    <div class="emojirow">${EMOJIS.map(e=>`<button data-e="${e}" class="${e===s.emoji?"sel":""}">${e}</button>`).join("")}</div>
+    <div style="display:flex;gap:10px">
+      <div style="flex:1"><div class="f-label">Dose</div><input class="f-input" id="fDose" value="${esc(s.dose)}" inputmode="decimal" maxlength="8"></div>
+      <div style="flex:1.4"><div class="f-label">Unit</div><select class="f-input" id="fUnit">${unitOptions(s.unit)}</select></div>
+    </div>
+    <div class="f-label">Time of day</div>
+    <div class="seg" id="segSlot">${SLOTS.map(x=>`<button data-v="${x[0]}" class="${s.slot===x[0]?"sel":""}">${x[1]}</button>`).join("")}</div>
+    <div class="f-label">With food?</div>
+    <div class="pick" style="margin-top:0;box-shadow:none;border:2px solid var(--line)">
+      <span class="em">🍽️</span>
+      <div><div class="nm" style="font-size:15px">Take with a meal</div><div class="ds">Shown as a reminder on your list</div></div>
+      <div class="tog ${s.withFood?"on":""}" id="fFood"><i></i></div>
+    </div>
+    <div class="f-label">Times per day</div>
+    <div class="stepper" id="stepTimes">
+      <button data-d="-1" aria-label="Fewer">−</button>
+      <div class="stepval"><b id="timesVal">${timesOf(s)}</b> <span>${timesOf(s)===1?"time":"times"} a day</span></div>
+      <button data-d="1" aria-label="More">+</button>
+    </div>
+    <div class="f-label">How often</div>
+    <div class="seg" id="segFreq">
+      <button data-v="daily" class="${s.freq==="daily"?"sel":""}">Daily</button>
+      <button data-v="custom" class="${s.freq==="custom"?"sel":""}">Some days</button>
+      <button data-v="asneeded" class="${s.freq==="asneeded"?"sel":""}">As needed</button>
+    </div>
+    <div class="dayspick" id="daysPick" style="display:${s.freq==="custom"?"flex":"none"}">
+      ${DAYL.map((d,i)=>`<button data-d="${i}" class="${(s.days||[]).includes(i)?"sel":""}">${d}</button>`).join("")}
+    </div>
+    <div class="f-label">Inventory <span style="text-transform:none;font-weight:600">(optional)</span></div>
+    <div class="pick" style="margin-top:0;box-shadow:none;border:2px solid var(--line)">
+      <span class="em">📦</span>
+      <div><div class="nm" style="font-size:15px">Track how much I have</div><div class="ds">Counts down as you log, warns when low</div></div>
+      <div class="tog ${s.trackStock?"on":""}" id="fStock"><i></i></div>
+    </div>
+    <div id="stockFields" style="display:${s.trackStock?"block":"none"}">
+      <div style="display:flex;gap:10px">
+        <div style="flex:1"><div class="f-label">How many left</div><input class="f-input" id="fStockQty" value="${s.stock!=null?esc(s.stock):""}" inputmode="numeric" placeholder="e.g. 60" maxlength="6"></div>
+        <div style="flex:1"><div class="f-label">Warn at</div><input class="f-input" id="fStockLow" value="${s.lowAt!=null?esc(s.lowAt):"7"}" inputmode="numeric" placeholder="7" maxlength="4"></div>
+      </div>
+      <div class="ds" style="margin-top:7px;padding:0 2px">Each dose you log removes one. We'll nudge you when you hit the warn level.</div>
+    </div>
+    <div style="margin-top:20px"><button class="btn" id="fSave">${isNew?"Add to stack":"Save changes"}</button></div>
+    ${!isNew?`<button class="btn ghost" id="fPause">${s.paused?"Resume":"Pause"} this supplement</button>
+    <button class="danger" id="fDel">Delete ${esc(s.name)}</button>`:""}
+  `);
+  const sh=$("#sheet");
+  sh.querySelectorAll(".chipbtn").forEach(b=>b.onclick=()=>{
+    const q=QUICK[+b.dataset.q];if(!q)return;
+    s.emoji=q.e;s.slot=q.sl;s.withFood=q.wf;
+    $("#fName").value=q.n;$("#fDose").value=q.d;$("#fUnit").value=q.u;
+    sh.querySelectorAll(".chipbtn").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");
+    sh.querySelectorAll(".emojirow button").forEach(x=>x.classList.toggle("sel",x.dataset.e===q.e));
+    sh.querySelectorAll("#segSlot button").forEach(x=>x.classList.toggle("sel",x.dataset.v===q.sl));
+    $("#fFood").classList.toggle("on",q.wf);
+  });
+  $("#fFood").onclick=()=>{s.withFood=!s.withFood;$("#fFood").classList.toggle("on",s.withFood);};
+  $("#fStock").onclick=()=>{s.trackStock=!s.trackStock;$("#fStock").classList.toggle("on",s.trackStock);$("#stockFields").style.display=s.trackStock?"block":"none";};
+  if(s.times===undefined)s.times=1;
+  sh.querySelectorAll("#stepTimes button").forEach(b=>b.onclick=()=>{
+    s.times=Math.max(1,Math.min(8,timesOf(s)+ (+b.dataset.d)));
+    $("#timesVal").textContent=s.times;
+    $("#timesVal").nextElementSibling.textContent=(s.times===1?"time":"times")+" a day";
+  });
+  sh.querySelectorAll(".emojirow button").forEach(b=>b.onclick=()=>{s.emoji=b.dataset.e;sh.querySelectorAll(".emojirow button").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");});
+  sh.querySelectorAll("#segSlot button").forEach(b=>b.onclick=()=>{s.slot=b.dataset.v;sh.querySelectorAll("#segSlot button").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");});
+  sh.querySelectorAll("#segFreq button").forEach(b=>b.onclick=()=>{s.freq=b.dataset.v;sh.querySelectorAll("#segFreq button").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");$("#daysPick").style.display=s.freq==="custom"?"flex":"none";});
+  sh.querySelectorAll("#daysPick button").forEach(b=>b.onclick=()=>{
+    const d=+b.dataset.d;s.days=s.days||[];
+    if(s.days.includes(d))s.days=s.days.filter(x=>x!==d);else s.days.push(d);
+    b.classList.toggle("sel");
+  });
+  $("#fSave").onclick=()=>{
+    const nm=$("#fName").value.trim();
+    if(!nm){toast("Give it a name first");return;}
+    if(s.freq==="custom"&&(!s.days||!s.days.length)){toast("Pick at least one day");return;}
+    s.name=nm;s.dose=$("#fDose").value.trim()||"1";s.unit=$("#fUnit").value;
+    if(s.trackStock){
+      const q=parseInt($("#fStockQty").value,10);
+      const lo=parseInt($("#fStockLow").value,10);
+      s.stock=Number.isFinite(q)&&q>=0?q:0;
+      s.lowAt=Number.isFinite(lo)&&lo>=0?lo:7;
+    }else{delete s.stock;delete s.lowAt;}
+    if(isNew){
+      s.id="s"+Date.now().toString(36);s.created=tkey();s.order=state.supps.reduce((m,x)=>Math.max(m,x.order??0),-1)+1;
+      state.supps.push(s);toast(nm+" added");
+    }else{
+      const i=state.supps.findIndex(x=>x.id===s.id);state.supps[i]=s;toast("Saved");
+    }
+    save();closeSheet();renderAll();
+  };
+  if(!isNew){
+    $("#fPause").onclick=()=>{
+      const i=state.supps.findIndex(x=>x.id===s.id);
+      state.supps[i].paused=!state.supps[i].paused;
+      save();closeSheet();renderAll();
+      toast(state.supps[i].paused?s.name+" paused — streak unaffected":s.name+" resumed");
+    };
+    let armDel=false;
+    $("#fDel").onclick=()=>{
+      if(!armDel){armDel=true;$("#fDel").textContent="Tap again to delete (history stays)";return;}
+      state.supps=state.supps.filter(x=>x.id!==s.id);
+      save();closeSheet();renderAll();toast(s.name+" deleted");
+    };
+  }
+}
+function skinUnlocked(id){
+  if(FORGIVING)return true;          // testing: everything free
+  if(id==="classic"||id==="coral")return true; // always-free starters
+  if(isPro())return true;
+  return (state.profile.unlockedSkins||[]).includes(id);
+}
+function wardrobeSheet(){
+  const cur=state.profile.skin||"classic";
+  const tierMeta=[["starter","Colours","Classic Jack, your way"],["outfit","Jack's outfits","Same Jack, dressed up"],["char","Characters","A whole new look"]];
+  const grid=tier=>`<div class="skingrid">${SKINS.filter(s=>s.tier===tier).map(s=>{
+    const unlocked=skinUnlocked(s.id),sel=s.id===cur;
+    return `<button class="skincard ${sel?"sel":""} ${unlocked?"":"locked"}" data-skin="${s.id}">
+      <div class="skinjar">${jarSVG(0.62,76,"mid",s)}</div>
+      <div class="skinname">${esc(s.name)}</div>
+      <div class="skinblurb">${esc(s.blurb)}</div>
+      ${sel?'<div class="skinbadge">✓ Wearing</div>':unlocked?"":'<div class="skinlock">🔒</div>'}
+    </button>`;}).join("")}</div>`;
+  openSheet(`
+    <div class="sh-title">Dress Jack</div>
+    <div class="sh-sub">${FORGIVING?"Everything's unlocked while we're testing — tell me your favourites.":"Unlock more with Pro."}</div>
+    ${tierMeta.map(t=>`<div class="wardtier">${t[1]}</div><div class="wardtierd">${t[2]}</div>${grid(t[0])}`).join("")}
+  `);
+  $("#sheet").querySelectorAll(".skincard").forEach(b=>b.onclick=()=>{
+    const id=b.dataset.skin;
+    if(!skinUnlocked(id)){paywallSheet("Unlock every Jack with Pro.");return;}
+    state.profile.skin=id;track("skin:"+id);save();
+    closeSheet();renderAll();
+    toast(skinById(id).name+" — looking good 🫙");
+  });
+}
+function settingsSheet(){
+  openSheet(`
+    <div class="sh-title">Settings</div>
+    <div class="f-label">Weekly target (good days)</div>
+    <div class="seg" id="segTgt">${[3,5,7].map(n=>`<button data-v="${n}" class="${state.profile.weeklyTarget===n?"sel":""}">${n} of 7</button>`).join("")}</div>
+    ${FORGIVING?"":`<div class="f-label">Plan</div>
+    <div class="pick" style="margin-top:0;box-shadow:none;border:2px solid var(--line)" id="setPro">
+      <span class="em">${isPro()?"⭐":"🔓"}</span>
+      <div><div class="nm" style="font-size:15px">${isPro()?"Jack and Pill Pro — active":"Unlock Pro"}</div><div class="ds">${isPro()?"Thanks for the support":"Insights, wardrobe, exports and themes"}</div></div>
+      ${isPro()?'<span style="margin-left:auto;font-weight:800;color:var(--coral)">✓</span>':'<span class="arr" style="margin-left:auto">›</span>'}
+    </div>`}
+    <div class="f-label">Appearance</div>
+    <div class="pick" style="margin-top:0;box-shadow:none;border:2px solid var(--line)" id="setWardrobe">
+      <span class="em">👕</span>
+      <div><div class="nm" style="font-size:15px">Dress Jack</div><div class="ds">${skinById(state.profile.skin||"classic").name}</div></div>
+      <span class="arr" style="margin-left:auto">›</span>
+    </div>
+    <div class="pick" style="margin-top:8px;box-shadow:none;border:2px solid var(--line)" id="setStats">
+      <span class="em">📊</span>
+      <div><div class="nm" style="font-size:15px">Tester stats</div><div class="ds">What you've used, for feedback</div></div>
+      <span class="arr" style="margin-left:auto">›</span>
+    </div>
+    <div class="f-label">Display</div>
+    <div class="pick" style="margin-top:0;box-shadow:none;border:2px solid var(--line)">
+      <span class="em">🔢</span>
+      <div><div class="nm" style="font-size:15px">Show doses</div><div class="ds">Names only when off</div></div>
+      <div class="tog ${state.profile.showDoses!==false?"on":""}" id="setDoses"><i></i></div>
+    </div>
+    <div class="f-label">Daily reminder time</div>
+    <input class="f-input" type="time" id="setTime" value="${state.profile.reminderTime}">
+    <p class="sub" style="margin-top:8px;font-size:13px">Push reminders arrive in the App Store version. Your preference is saved.</p>
+    <div style="margin-top:18px"><button class="btn" id="setSave">Save settings</button></div>
+    <button class="danger" id="setReset">Reset all data</button>
+  `);
+  if($("#setWardrobe"))$("#setWardrobe").onclick=()=>{closeSheet();setTimeout(wardrobeSheet,260);};
+  if($("#setStats"))$("#setStats").onclick=()=>{closeSheet();setTimeout(statsSheet,260);};
+  if(!isPro()&&$("#setPro"))$("#setPro").onclick=()=>paywallSheet();
+  $("#setDoses").onclick=()=>{state.profile.showDoses=!(state.profile.showDoses!==false);$("#setDoses").classList.toggle("on",state.profile.showDoses!==false);save();renderAll();};
+  let tgt=state.profile.weeklyTarget;
+  $("#sheet").querySelectorAll("#segTgt button").forEach(b=>b.onclick=()=>{tgt=+b.dataset.v;$("#sheet").querySelectorAll("#segTgt button").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");});
+  $("#setSave").onclick=()=>{
+    state.profile.weeklyTarget=tgt;
+    const v=$("#setTime").value;if(v)state.profile.reminderTime=v;
+    save();closeSheet();renderAll();toast("Settings saved");
+  };
+  let armReset=false;
+  $("#setReset").onclick=async()=>{
+    if(!armReset){armReset=true;$("#setReset").textContent="Tap again to wipe everything";return;}
+    try{await window.storage.delete(SKEY);}catch(e){}
+    state={v:1,onboarded:false,profile:{age:"30s",goal:"training",weeklyTarget:5,reminderTime:"08:00"},supps:[],logs:{},checkins:{}};
+    OB.step=0;OB.age=null;OB.goal=null;OB.target=null;OB.demoDone=false;OB.picks=null;OB.picksGoal=null;
+    closeSheet();
+    $("#app").classList.remove("on");$("#ob").classList.add("on");
+    obRender();
+  };
+}
+
+/* ---------- paywall ---------- */
+function paywallSheet(reason){
+  openSheet(`
+    <div class="center" style="margin:4px 0 6px">${jarSVG(1,96)}</div>
+    <div class="sh-title center">Jack and Pill Pro</div>
+    <div class="sh-sub center">${esc(reason||"Everything, forever, one payment.")}</div>
+    ${[["👕","The full wardrobe","Every Jack and character, yours to wear"],
+       ["🔍","Feel insights","Connects your best weeks to what you took"],
+       ["🎁","Every future feature","Themes, exports and whatever comes next"]]
+      .map(f=>`<div class="pick" style="margin-top:10px"><span class="em">${f[0]}</span><div><div class="nm">${f[1]}</div><div class="ds">${f[2]}</div></div></div>`).join("")}
+    <div class="center" style="margin:16px 0 4px;font-size:24px;font-weight:800">$14.99 <span style="font-size:14px;color:var(--ink-soft)">one-time · no subscription</span></div>
+    <div style="margin-top:12px"><button class="btn" id="pwBuy">Unlock Pro</button></div>
+    <button class="btn ghost" id="pwLater">Maybe later</button>
+    <div class="center" style="margin-top:2px"><button id="pwRestore" style="font-size:13px;font-weight:700;color:var(--ink-soft);text-decoration:underline">Restore purchase</button></div>
+    <p class="sub center" style="font-size:12px;margin-top:12px">Preview build — the unlock is free and no real payment happens yet.</p>
+  `);
+  $("#pwBuy").onclick=()=>{state.profile.pro=true;save();closeSheet();toast("Pro unlocked 🎉");renderAll();};
+  $("#pwLater").onclick=closeSheet;
+  $("#pwRestore").onclick=()=>toast("Nothing to restore in this preview");
+}
+
+/* ---------- WEEKS ---------- */
+// copy for the streak card when this week can no longer hit target (reads state, changes nothing).
+// A freeze is only promised when streakWeeks' forward walk will spend one at week end:
+// streak > 0, a freeze banked, and something due this week (a nothing-due week is skipped as a gap).
+function streakOutLine(sk){
+  if(sk.streak===0)return "Fresh start Monday. Jack's ready when you are.";
+  const curDue=weekStats(dkey(mondayOf(today()))).denom>0;
+  if(sk.freezes>0&&curDue)return "Your freeze has this week covered. Back on it Monday.";
+  return "This week's slipped, and that's OK. Fresh start Monday.";
+}
+function renderWeeks(){
+  const sk=streakWeeks();
+  const thisMon=mondayOf(today());
+  const fu=firstUseKey();
+  let weekRows="";let count=0;
+  if(fu){
+    let m=thisMon;
+    const firstMon=mondayOf(fromKey(fu));
+    while(dkey(m)>=dkey(firstMon)&&count<12){
+      const mk=dkey(m);const ws=weekStats(mk);
+      const ci=state.checkins[mk];
+      const isCur=mk===dkey(thisMon);
+      const tgt=state.profile.weeklyTarget;
+      const met=ws.good>=tgt;
+      const dots=ws.days.map(d=>`<span class="gd ${d.future?"fut":d.good?"on":d.pct>0?"part":""}"></span>`).join("");
+      weekRows+=`<div class="wkrow">
+        <div class="wkmain">
+          <div class="wktop"><span class="lbl">${isCur?"This week":fmtShort(fromKey(mk))}</span>${ci?`<span class="fe">${FEELS[ci.feel-1]}</span>`:""}</div>
+          <div class="gddots">${dots}</div>
+          <div class="sub2">${ws.good} of ${tgt} good days${met?' · <span class="hit">target hit ✓</span>':""}</div>
+        </div>
+      </div>`;
+      m=addDays(m,-7);count++;
+    }
+  }
+  // insight
+  let insight="";
+  const cis=Object.values(state.checkins);
+  if(cis.length>=3){
+    if(!isPro()){
+      insight=`<div class="card insight"><div class="tt">🔒 Pro insight ready</div><p>Three check-ins logged — Jack can now connect how you feel to what you take.</p><button class="btn" id="insUnlock" style="margin-top:12px">See what's working</button></div>`;
+    }else{
+      const hi=cis.filter(c=>c.feel>=4),lo=cis.filter(c=>c.feel<=3);
+      if(hi.length&&lo.length){
+        const avg=a=>Math.round(a.reduce((x,c)=>x+c.pct,0)/a.length);
+        insight=`<div class="card insight"><div class="tt">Early pattern</div><p>On weeks you felt good you averaged <b>${avg(hi)}%</b> of your doses, against <b>${avg(lo)}%</b> on rougher weeks. Worth keeping Jack full.</p></div>`;
+      }else{
+        insight=`<div class="card insight"><div class="tt">Early pattern</div><p>Your check-ins are all similar so far — a few more varied weeks will sharpen this insight.</p></div>`;
+      }
+    }
+  }else{
+    insight=`<div class="card insight"><div class="tt">Coming soon</div><p>After three Sunday check-ins, Jack starts connecting how you feel to what you took.</p></div>`;
+  }
+  $("#pgWeeks").innerHTML=`
+    <div class="apphead"><div><div class="date">Progress</div><h1>Weeks</h1></div></div>
+    ${insight}
+    <button class="sharebtn" id="shareWeek">📤 Share my week</button>
+    <div class="card"><div class="bigstreak"><span class="fl">${sk.alive?"🔥":"🪵"}</span>
+      <div><div class="n">${sk.streak} week${sk.streak===1?"":"s"}</div>
+      <div class="l">${sk.alive?(sk.curGood>=state.profile.weeklyTarget?"This week's target hit, cruise mode":"Still alive: "+(state.profile.weeklyTarget-sk.curGood)+" more good day"+(state.profile.weeklyTarget-sk.curGood===1?"":"s")+" needed this week"):streakOutLine(sk)}</div></div>
+    </div>${sk.freezes>0||sk.usedFreeze?`<div class="freezerow">${sk.freezes>0?`<span class="freezechip">❄️ ${sk.freezes} freeze${sk.freezes===1?"":"s"} banked</span>`:""}${sk.usedFreeze?`<span class="freezechip used">❄️ saved a tough week</span>`:""}</div>`:""}</div>
+    <div class="card">${weekRows||'<p class="sub">Your weeks will appear here once you start logging.</p>'}</div>`;
+  const sw=$("#shareWeek");if(sw)sw.onclick=shareCardSheet;
+  const iu=$("#insUnlock");if(iu)iu.onclick=()=>paywallSheet("Unlock the feel-correlation insight.");
+}
+
+/* ---------- misc ---------- */
+function esc(x){return String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+
+/* ---------- boot ---------- */
+(async function(){
+  await load();
+  normalizeOrders();
+  if(state.onboarded){enterApp();}
+  else{obRender();}
+})();
+</script>
+</body>
+</html>
