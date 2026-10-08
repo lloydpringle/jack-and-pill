@@ -373,7 +373,7 @@ h2{font-size:21px;font-weight:800;letter-spacing:-.3px}
 <script>
 "use strict";
 /* =================================================================
-   STACKED v1 — supplement tracker prototype
+   STACKED v1 - supplement tracker prototype
    ================================================================= */
 const $=s=>document.querySelector(s);
 const SKEY="stacked-v1";
@@ -455,7 +455,7 @@ let storageOK=true, saveT=null;
 async function load(){
   try{const r=await window.storage.get(SKEY);
     if(r&&r.value){const d=JSON.parse(r.value); if(d&&d.v===1) state=d;}
-  }catch(e){/* no saved data yet, or storage unavailable — start fresh */}
+  }catch(e){/* no saved data yet, or storage unavailable - start fresh */}
   if(!Array.isArray(state.events))state.events=[];
   if(!Array.isArray(state.profile.milestones))state.profile.milestones=[];
 }
@@ -469,8 +469,8 @@ function save(){
   clearTimeout(saveT);
   saveT=setTimeout(async()=>{
     try{const r=await window.storage.set(SKEY,JSON.stringify(state));
-      if(!r&&storageOK){storageOK=false;toast("Saving unavailable — data lives in this session only");}
-    }catch(e){if(storageOK){storageOK=false;toast("Saving unavailable — data lives in this session only");}}
+      if(!r&&storageOK){storageOK=false;toast("Saving unavailable, so data lives in this session only");}
+    }catch(e){if(storageOK){storageOK=false;toast("Saving unavailable, so data lives in this session only");}}
   },250);
 }
 
@@ -485,7 +485,7 @@ function mondayOf(d){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());
 function fmtDate(d){return d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});}
 function fmtShort(d){return d.toLocaleDateString("en-GB",{day:"numeric",month:"short"});}
 
-// MONETISATION (decided): option (a) — the free tier has NO supplement cap, ever.
+// MONETISATION (decided): option (a) - the free tier has NO supplement cap, ever.
 // Pro = insights, wardrobe, exports, themes. Price model still undecided.
 // FORGIVING=true unlocks Pro features for testers and keeps the Pro row hidden.
 const FORGIVING=true;
@@ -512,7 +512,7 @@ function dayStats(key){
   for(const s of due)for(const dk of doseKeys(s))denomSet.add(dk);
   // count taken sub-doses even if their supplement was later paused/removed, so history stays fair
   for(const k in log){if(log[k].s==="taken")denomSet.add(k);}
-  // "not needed today" is not a miss — drop it from the day's maths entirely
+  // "not needed today" is not a miss - drop it from the day's maths entirely
   for(const k in log){if(log[k].s==="skipped"&&log[k].r==="Not needed today")denomSet.delete(k);}
   const denom=denomSet.size;
   let taken=0;for(const k of denomSet){if(log[k]&&log[k].s==="taken")taken++;}
@@ -550,7 +550,7 @@ function streakWeeks(){
     }else if(freezes>0){
       freezes--;usedFreeze=true;frozenWeeks++;goodRun=0;streak++; // freeze saves this week
     }else{
-      streak=0;goodRun=0; // streak broken; freezes persist as a fresh-start cushion? no — reset cushion too
+      streak=0;goodRun=0; // streak broken; freezes persist as a fresh-start cushion? no - reset cushion too
       freezes=0;usedFreeze=false;frozenWeeks=0;
     }
     m=addDays(m,7);
@@ -577,12 +577,12 @@ const SKINS=[
   {id:"coral",name:"Coral",blurb:"House colours",tier:"starter",container:"#FFFFFF",cstroke:"#F2C9C3",fill:"#EE5A4F",gran:"#D94A40",granTop:"#F47A70",lid:"#262A3F",lid2:"#3A3F5C",shine:"#fff"},
   {id:"mint",name:"Minty",blurb:"Calm & fresh",tier:"starter",container:"#FFFFFF",cstroke:"#CDE8DA",fill:"#5FC9A0",gran:"#3FAE85",granTop:"#7FD9B6",lid:"#2E5D4E",lid2:"#3F7A66",shine:"#fff"},
   {id:"midnight",name:"Midnight",blurb:"Biohacker",tier:"starter",container:"#1F2740",cstroke:"#141A2E",fill:"#17D4C4",gran:"#0FA89B",granTop:"#4DE8DA",lid:"#9AA6C7",lid2:"#C2CCE6",shine:"#ffffff",dark:true,glow:"#17D4C4"},
-  // ---- Jack in outfits (4) — same amber jar, accessory on top ----
+  // ---- Jack in outfits (4) - same amber jar, accessory on top ----
   {id:"coach",name:"Coach Jack",blurb:"Gym day",tier:"outfit",container:"#FFFFFF",cstroke:"#E8DCD2",fill:"#F5A93B",gran:"#E08A26",granTop:"#F5A93B",lid:"#262A3F",lid2:"#3A3F5C",shine:"#fff",acc:"headband"},
   {id:"cool",name:"Cool Jack",blurb:"Feeling good",tier:"outfit",container:"#FFFFFF",cstroke:"#E8DCD2",fill:"#F5A93B",gran:"#E08A26",granTop:"#F5A93B",lid:"#262A3F",lid2:"#3A3F5C",shine:"#fff",acc:"shades"},
   {id:"wizard",name:"Wizard Jack",blurb:"30-day streak",tier:"outfit",container:"#FFFFFF",cstroke:"#E8DCD2",fill:"#F5A93B",gran:"#E08A26",granTop:"#F5A93B",lid:"#262A3F",lid2:"#3A3F5C",shine:"#fff",acc:"wizard"},
   {id:"king",name:"King Jack",blurb:"Perfect month",tier:"outfit",container:"#FFFFFF",cstroke:"#E8DCD2",fill:"#F5A93B",gran:"#E08A26",granTop:"#F5A93B",lid:"#262A3F",lid2:"#3A3F5C",shine:"#fff",acc:"crown"},
-  // ---- alternate characters (6) — different shapes ----
+  // ---- alternate characters (6) - different shapes ----
   {id:"bottle",name:"Pip the Bottle",blurb:"Pill bottle",tier:"char",shape:"bottle",fill:"#7C6BC4",gran:"#5E4DA0",granTop:"#9384D6"},
   {id:"capsule",name:"Cap the Capsule",blurb:"Two-tone capsule",tier:"char",shape:"capsule",fill:"#F5A93B",gran:"#E08A26",granTop:"#F5A93B"},
   {id:"shaker",name:"Shaky",blurb:"Gym shaker",tier:"char",shape:"shaker",fill:"#2FA8E0",gran:"#1E86C0",granTop:"#5AC2EE"},
@@ -650,7 +650,7 @@ function jarSVG(pct,size,mood,skin){
   </svg>`;
 }
 
-// alternate-character shapes — all expose #jfill so pour/fill animations keep working
+// alternate-character shapes - all expose #jfill so pour/fill animations keep working
 function shapeSVG(pct,size,mood,S){
   const W=140,H=160;
   const svg=b=>`<svg id="jarsvg" width="${size}" height="${size*H/W}" viewBox="0 0 ${W} ${H}">${b}</svg>`;
@@ -746,9 +746,9 @@ function hadPerfectWeek(){
   return weekStats(dkey(thisMon)).good===7;
 }
 const MILESTONES=[
-  {id:"coach",need:()=>totalGoodDays()>=7,label:"7 good days",skin:"coach",line:"Coach Jack earned — 7 good days on the board 🏋️"},
-  {id:"wizard",need:()=>streakWeeks().streak>=4,label:"4-week streak",skin:"wizard",line:"Wizard Jack earned — a 4-week streak is proper magic 🧙"},
-  {id:"king",need:()=>hadPerfectWeek(),label:"a perfect week",skin:"king",line:"King Jack earned — a perfect 7-for-7 week 👑"}
+  {id:"coach",need:()=>totalGoodDays()>=7,label:"7 good days",skin:"coach",line:"Coach Jack earned: 7 good days on the board 🏋️"},
+  {id:"wizard",need:()=>streakWeeks().streak>=4,label:"4-week streak",skin:"wizard",line:"Wizard Jack earned: a 4-week streak is proper magic 🧙"},
+  {id:"king",need:()=>hadPerfectWeek(),label:"a perfect week",skin:"king",line:"King Jack earned: a perfect 7-for-7 week 👑"}
 ];
 function newMilestones(){
   const got=state.profile.milestones||[];
@@ -775,10 +775,10 @@ function shareCardSheet(){
   `);
   $("#scShare").onclick=async()=>{
     track("share");
-    const txt=`My week with Jack: ${wk.good} of 7 good days, ${sk.streak}-week streak 🫙 — Made with Jack and Pill`;
+    const txt=`My week with Jack: ${wk.good} of 7 good days, ${sk.streak}-week streak 🫙 Made with Jack and Pill`;
     try{
       if(navigator.share){await navigator.share({text:txt});}
-      else if(navigator.clipboard){await navigator.clipboard.writeText(txt);toast("Copied — paste it anywhere");}
+      else if(navigator.clipboard){await navigator.clipboard.writeText(txt);toast("Copied. Paste it anywhere");}
       else toast("Screenshot the card to share it");
     }catch(e){/* user cancelled share */}
   };
@@ -789,7 +789,7 @@ function statsSheet(){
   const rows=Object.keys(counts).sort().map(k=>`<div class="statrow"><span>${esc(k)}</span><b>${counts[k]}</b></div>`).join("");
   openSheet(`
     <div class="sh-title">Tester stats</div>
-    <div class="sh-sub">A simple local count of what you've used — screenshot this when giving feedback. Nothing leaves your device.</div>
+    <div class="sh-sub">A simple local count of what you've used. Screenshot this when giving feedback. Nothing leaves your device.</div>
     <div class="card" style="margin-top:10px">${rows||'<p class="sub">Nothing logged yet.</p>'}</div>
     <p class="sub" style="margin-top:10px;font-size:12px">${ev.length} events total · milestones: ${(state.profile.milestones||[]).join(", ")||"none yet"}</p>
   `);
@@ -800,7 +800,7 @@ function celebrate(){
   track("daydone");
   // full jar, freshly rendered so it dances in the centre where the user is looking
   $("#celJar").innerHTML=jarSVG(1,150,"full");
-  // milestone check — announce newly earned characters
+  // milestone check - announce newly earned characters
   const mile=$("#celMile");
   if(mile){
     const nm=newMilestones();
@@ -875,7 +875,7 @@ function obRender(){
         <div class="glow">${jarSVG(0.55,150,"zen")}</div>
         <div class="groundshadow"></div>
       </div>
-      <h1 class="reveal splash-h" style="--i:1;margin-top:30px">Meet Jack —<br>your supplement sidekick</h1>
+      <h1 class="reveal splash-h" style="--i:1;margin-top:30px">Meet Jack,<br>your supplement sidekick</h1>
     </div>`;
     F.innerHTML=`<button class="btn" id="obNext">Get started</button>`;
     $("#obNext").onclick=()=>obGo(1);
@@ -884,7 +884,7 @@ function obRender(){
     B.innerHTML=`<div class="center">
       <div class="eyebrow reveal" style="--i:0">Try it</div>
       <h1 class="reveal" style="--i:1">Log a dose with one tap</h1>
-      <p class="sub reveal" style="--i:2;margin-top:8px">${OB.demoDone?"That's the whole job. Ten seconds a day.":"Go on — tick off the creatine."}</p>
+      <p class="sub reveal" style="--i:2;margin-top:8px">${OB.demoDone?"That's the whole job. Ten seconds a day.":"Go on, tick off the creatine."}</p>
       <div class="jar-wrap reveal" style="--i:3" id="demoJar">${jarSVG(OB.demoDone?1:0,150)}</div>
       <div class="demo-row reveal" style="--i:4${OB.demoDone?";background:var(--blush)":""}" id="demoRow">
         <span style="font-size:25px">⚡</span>
@@ -910,9 +910,9 @@ function obRender(){
     B.innerHTML=`<div class="center">
       <div class="eyebrow reveal" style="--i:0">No guilt trips</div>
       <h1 class="reveal" style="--i:1">A streak that forgives</h1>
-      <p class="sub reveal" style="--i:2;margin-top:8px;max-width:310px;margin-left:auto;margin-right:auto">You set a weekly target. Hit it and your streak lives — even if Tuesday got away from you.</p>
+      <p class="sub reveal" style="--i:2;margin-top:8px;max-width:310px;margin-left:auto;margin-right:auto">You set a weekly target. Hit it and your streak lives, even if Tuesday got away from you.</p>
       <div class="dotsrow reveal" style="--i:3">${DAYL.map((d,i)=>`<div class="d ${[0,1,3,4,6].includes(i)?"f":""}">${d}</div>`).join("")}</div>
-      <p class="reveal" style="--i:4;font-size:14px;font-weight:800;color:var(--amber-deep);margin-top:12px">5 of 7 — streak intact 🔥</p>
+      <p class="reveal" style="--i:4;font-size:14px;font-weight:800;color:var(--amber-deep);margin-top:12px">5 of 7: streak intact 🔥</p>
     </div>`;
     F.innerHTML=`<button class="btn" id="obNext">Continue</button>`;
     $("#obNext").onclick=()=>obGo(1);
@@ -940,7 +940,7 @@ function obRender(){
   }
   else if(name==="age"){
     B.innerHTML=`<h1 class="reveal" style="--i:0">How far into the journey are you?</h1>
-      <p class="sub reveal" style="--i:1;margin-top:6px">Needs shift with age — this tunes your picks.</p>
+      <p class="sub reveal" style="--i:1;margin-top:6px">Needs shift with age, so this tunes your picks.</p>
       <div style="margin-top:14px">${AGES.map((a,i)=>`<button class="opt reveal" style="--i:${i+2}" data-v="${a[1]}">${a[0]}</button>`).join("")}</div>`;
     B.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{OB.age=b.dataset.v;selOnly(b);setTimeout(()=>obGo(1),240);});
     markSel(B,OB.age);
@@ -982,7 +982,7 @@ function obRender(){
     if(!OB.picks||OB.picksGoal!==OB.goal){OB.picks=buildPicks(OB.goal);OB.picksGoal=OB.goal;}
     B.innerHTML=`<div class="eyebrow reveal" style="--i:0">Build your stack</div>
       <h1 class="reveal" style="--i:1">What's already in your routine?</h1>
-      <p class="sub reveal" style="--i:2;margin-top:6px">Tap everything you currently take — the most common for ${goalLabel(OB.goal)} are up top. You can add your own later.</p>
+      <p class="sub reveal" style="--i:2;margin-top:6px">Tap everything you currently take. The most common for ${goalLabel(OB.goal)} are up top. You can add your own later.</p>
       <div class="pick reveal" style="--i:3;border:2px solid var(--line);box-shadow:none">
         <span class="em">🔢</span>
         <div><div class="nm" style="font-size:15px">Show doses</div><div class="ds">Typical amounts, fully editable</div></div>
@@ -1008,7 +1008,7 @@ function obRender(){
     B.innerHTML=`<div class="center">
       <div class="eyebrow reveal" style="--i:0">Your stack, your rules</div>
       <h1 class="reveal" style="--i:1">Taking something that's<br>not on the list?</h1>
-      <p class="sub reveal" style="--i:2;margin-top:8px;max-width:300px;margin-left:auto;margin-right:auto">Add anything in a couple of taps — supplements, powders, prescriptions, whatever you take.</p>
+      <p class="sub reveal" style="--i:2;margin-top:8px;max-width:300px;margin-left:auto;margin-right:auto">Add anything in a couple of taps: supplements, powders, prescriptions, whatever you take.</p>
       <div class="phonemock reveal" style="--i:3" id="addMock">${addDemoMarkup()}</div>
     </div>`;
     F.innerHTML=`<button class="btn" id="obNext">Got it</button>`;
@@ -1019,7 +1019,7 @@ function obRender(){
     B.innerHTML=`<div class="center">
       <div class="eyebrow reveal" style="--i:0">Make it a habit</div>
       <h1 class="reveal" style="--i:1">When should the nudge arrive?</h1>
-      <p class="sub reveal" style="--i:2;margin-top:8px;max-width:300px;margin:8px auto 0">One reminder per day, not one per pill. Push reminders arrive in the App Store version — your time is saved and ready.</p>
+      <p class="sub reveal" style="--i:2;margin-top:8px;max-width:300px;margin:8px auto 0">One reminder per day, not one per pill. Push reminders arrive in the App Store version. Your time is saved and ready.</p>
       <div class="timepick reveal" style="--i:3"><input type="time" id="remTime" value="${state.profile.reminderTime}" tabindex="-1"></div>
     </div>`;
     F.innerHTML=`<button class="btn" id="obNext">Save my time</button>`;
@@ -1029,7 +1029,7 @@ function obRender(){
     B.innerHTML=`<div class="center">
       <div class="eyebrow reveal" style="--i:0">Early tester perk</div>
       <h1 class="reveal" style="--i:1">Pro is coming.<br>You get it free. Forever.</h1>
-      <p class="sub reveal" style="--i:2;margin-top:8px;max-width:310px;margin:8px auto 0">Jack and Pill Pro will bring feel-insights, the full wardrobe and every future feature — one-time unlock, no subscription. As an early tester, yours is free for life.</p>
+      <p class="sub reveal" style="--i:2;margin-top:8px;max-width:310px;margin:8px auto 0">Jack and Pill Pro will bring feel-insights, the full wardrobe and every future feature. As an early tester, you'll never pay a penny for it.</p>
       <div class="founderbadge reveal" style="--i:3">🫙 Founding Tester</div>
     </div>`;
     F.innerHTML=`<button class="btn" id="obNext">Claim founder access</button>`;
@@ -1049,7 +1049,7 @@ function obRender(){
     B.innerHTML=`<div class="center">
       <div class="jar-wrap reveal" style="--i:0" id="doneJar">${jarSVG(1,190)}</div>
       <h1 class="reveal" style="--i:1">Jack’s ready to go</h1>
-      <p class="sub reveal" style="--i:2;margin-top:8px">${OB.goal?"Built around "+goalLabel(OB.goal)+" — ":""}Every dose you log pours granules in. Fill it, feel smug, repeat.</p>
+      <p class="sub reveal" style="--i:2;margin-top:8px">${OB.goal?"Built around "+goalLabel(OB.goal)+". ":""}Every dose you log pours granules in. Fill it, feel smug, repeat.</p>
     </div>`;
     F.innerHTML=`<button class="btn" id="obNext">Start tracking</button>`;
     setTimeout(()=>{const j=$("#doneJar");if(j)confettiBurst(j);},500);
@@ -1183,7 +1183,7 @@ function renderToday(){
     </div>
     <div class="jarhero" id="heroJar">${jarSVG(fullPct,168)}
       <button class="jartap" id="jarTap" aria-label="Change Jack">👕 Dress Jack</button>
-      <div class="jarsum">${ds.denom?`<b>${ds.taken}</b> of <b>${ds.denom}</b> taken${done?" — day done 🎉":""}`:"No scheduled doses today"}</div>
+      <div class="jarsum">${ds.denom?`<b>${ds.taken}</b> of <b>${ds.denom}</b> taken${done?" · day done 🎉":""}`:"No scheduled doses today"}</div>
     </div>
     <div class="weekdots">${dots}</div>
     <div style="text-align:center;font-size:12.5px;font-weight:800;color:var(--ink-soft)">${wk.good} of ${state.profile.weeklyTarget} good days this week</div>
@@ -1227,8 +1227,8 @@ function renderLowStock(){
   const out=low.filter(s=>s.stock<=0);
   const names=low.map(s=>esc(s.name)).join(", ");
   const msg=out.length
-    ? `You're out of ${out.map(s=>esc(s.name)).join(", ")} — time to restock 📦`
-    : `Running low on ${names} — might be worth restocking soon 📦`;
+    ? `You're out of ${out.map(s=>esc(s.name)).join(", ")}, time to restock 📦`
+    : `Running low on ${names}, might be worth restocking soon 📦`;
   slot.innerHTML=`<div class="lowbanner"><span class="lbic">📦</span><div class="tx">${msg}</div></div>`;
 }
 function rowsForSupp(s,log){
@@ -1329,7 +1329,7 @@ function pendingWelcomeBack(){
 function renderCheckinBanner(){
   const slot=$("#checkinSlot");if(!slot)return;
   const wk=pendingCheckinWeek();
-  slot.innerHTML=wk?`<div class="banner"><div class="tx">Sunday's gone — how was last week?</div><button class="go" id="ciGo">10-sec check-in</button></div>`:"";
+  slot.innerHTML=wk?`<div class="banner"><div class="tx">Sunday's gone. How was last week?</div><button class="go" id="ciGo">10-sec check-in</button></div>`:"";
   if(wk)$("#ciGo").onclick=()=>checkinSheet(wk);
 }
 function maybeCheckinPrompt(){
@@ -1581,7 +1581,7 @@ function editSheet(id){
       const i=state.supps.findIndex(x=>x.id===s.id);
       state.supps[i].paused=!state.supps[i].paused;
       save();closeSheet();renderAll();
-      toast(state.supps[i].paused?s.name+" paused — streak unaffected":s.name+" resumed");
+      toast(state.supps[i].paused?s.name+" paused, streak unaffected":s.name+" resumed");
     };
     let armDel=false;
     $("#fDel").onclick=()=>{
@@ -1610,7 +1610,7 @@ function wardrobeSheet(){
     </button>`;}).join("")}</div>`;
   openSheet(`
     <div class="sh-title">Dress Jack</div>
-    <div class="sh-sub">${FORGIVING?"Everything's unlocked while we're testing — tell me your favourites.":"Unlock more with Pro."}</div>
+    <div class="sh-sub">${FORGIVING?"Everything's unlocked while we're testing. Tell me your favourites.":"Unlock more with Pro."}</div>
     ${tierMeta.map(t=>`<div class="wardtier">${t[1]}</div><div class="wardtierd">${t[2]}</div>${grid(t[0])}`).join("")}
   `);
   $("#sheet").querySelectorAll(".skincard").forEach(b=>b.onclick=()=>{
@@ -1618,7 +1618,7 @@ function wardrobeSheet(){
     if(!skinUnlocked(id)){paywallSheet("Unlock every Jack with Pro.");return;}
     state.profile.skin=id;track("skin:"+id);save();
     closeSheet();renderAll();
-    toast(skinById(id).name+" — looking good 🫙");
+    toast(skinById(id).name+", looking good 🫙");
   });
 }
 function settingsSheet(){
@@ -1629,7 +1629,7 @@ function settingsSheet(){
     ${FORGIVING?"":`<div class="f-label">Plan</div>
     <div class="pick" style="margin-top:0;box-shadow:none;border:2px solid var(--line)" id="setPro">
       <span class="em">${isPro()?"⭐":"🔓"}</span>
-      <div><div class="nm" style="font-size:15px">${isPro()?"Jack and Pill Pro — active":"Unlock Pro"}</div><div class="ds">${isPro()?"Thanks for the support":"Insights, wardrobe, exports and themes"}</div></div>
+      <div><div class="nm" style="font-size:15px">${isPro()?"Jack and Pill Pro · active":"Unlock Pro"}</div><div class="ds">${isPro()?"Thanks for the support":"Insights, wardrobe, exports and themes"}</div></div>
       ${isPro()?'<span style="margin-left:auto;font-weight:800;color:var(--coral)">✓</span>':'<span class="arr" style="margin-left:auto">›</span>'}
     </div>`}
     <div class="f-label">Appearance</div>
@@ -1692,7 +1692,7 @@ function paywallSheet(reason){
     <div style="margin-top:12px"><button class="btn" id="pwBuy">Unlock Pro</button></div>
     <button class="btn ghost" id="pwLater">Maybe later</button>
     <div class="center" style="margin-top:2px"><button id="pwRestore" style="font-size:13px;font-weight:700;color:var(--ink-soft);text-decoration:underline">Restore purchase</button></div>
-    <p class="sub center" style="font-size:12px;margin-top:12px">Preview build — the unlock is free and no real payment happens yet.</p>
+    <p class="sub center" style="font-size:12px;margin-top:12px">Preview build. The unlock is free and no real payment happens yet.</p>
   `);
   $("#pwBuy").onclick=()=>{state.profile.pro=true;save();closeSheet();toast("Pro unlocked 🎉");renderAll();};
   $("#pwLater").onclick=closeSheet;
@@ -1739,14 +1739,14 @@ function renderWeeks(){
   const cis=Object.values(state.checkins);
   if(cis.length>=3){
     if(!isPro()){
-      insight=`<div class="card insight"><div class="tt">🔒 Pro insight ready</div><p>Three check-ins logged — Jack can now connect how you feel to what you take.</p><button class="btn" id="insUnlock" style="margin-top:12px">See what's working</button></div>`;
+      insight=`<div class="card insight"><div class="tt">🔒 Pro insight ready</div><p>Three check-ins logged. Jack can now connect how you feel to what you take.</p><button class="btn" id="insUnlock" style="margin-top:12px">See what's working</button></div>`;
     }else{
       const hi=cis.filter(c=>c.feel>=4),lo=cis.filter(c=>c.feel<=3);
       if(hi.length&&lo.length){
         const avg=a=>Math.round(a.reduce((x,c)=>x+c.pct,0)/a.length);
         insight=`<div class="card insight"><div class="tt">Early pattern</div><p>On weeks you felt good you averaged <b>${avg(hi)}%</b> of your doses, against <b>${avg(lo)}%</b> on rougher weeks. Worth keeping Jack full.</p></div>`;
       }else{
-        insight=`<div class="card insight"><div class="tt">Early pattern</div><p>Your check-ins are all similar so far — a few more varied weeks will sharpen this insight.</p></div>`;
+        insight=`<div class="card insight"><div class="tt">Early pattern</div><p>Your check-ins are all similar so far. A few more varied weeks will sharpen this insight.</p></div>`;
       }
     }
   }else{
