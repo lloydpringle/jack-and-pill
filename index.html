@@ -102,7 +102,6 @@ h2{font-size:21px;font-weight:800;letter-spacing:-.3px}
 /* loading */
 .loadjar{margin:0 auto 22px;display:flex;justify-content:center}
 .loadjar svg{transition:none}
-.fact{background:var(--blush);border-radius:var(--r-md);padding:20px;font-size:16.5px;font-weight:700;line-height:1.55;color:var(--ink);min-height:104px;display:flex;align-items:center;justify-content:center;text-align:center;transition:opacity .2s}
 .fact b{color:var(--coral)}
 /* mini demo */
 .demo-row{display:flex;align-items:center;gap:13px;background:var(--card);border-radius:var(--r-md);padding:16px;box-shadow:0 4px 14px rgba(46,42,51,.07);margin:16px auto 0;max-width:330px}
@@ -112,7 +111,8 @@ h2{font-size:21px;font-weight:800;letter-spacing:-.3px}
 .dotsrow .d{width:30px;height:30px;border-radius:50%;background:var(--blush);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--ink-soft)}
 .dotsrow .d.f{background:var(--amber);color:#fff}
 .confetti{position:absolute;width:9px;height:9px;border-radius:2px;animation:conf 1.1s ease-out forwards;pointer-events:none;z-index:50}
-.phonemock{margin:22px auto 0;width:236px;background:#fff;border-radius:24px;box-shadow:0 14px 36px rgba(46,42,51,.16);border:1px solid var(--line);overflow:hidden}
+.mocklbl{margin-top:18px;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+.phonemock{pointer-events:none;user-select:none;-webkit-user-select:none;margin:8px auto 0;width:236px;background:#fff;border-radius:24px;box-shadow:0 14px 36px rgba(46,42,51,.16);border:1px solid var(--line);overflow:hidden}
 .pm-screen{padding:16px 15px 18px;text-align:left}
 .pm-head{font-size:15px;font-weight:800;color:var(--ink);margin-bottom:12px}
 .pm-field{background:#fff;border:2px solid var(--line);border-radius:12px;padding:9px 12px;min-height:46px;display:flex;flex-direction:column;justify-content:center;position:relative;transition:border-color .2s}
@@ -237,7 +237,7 @@ h2{font-size:21px;font-weight:800;letter-spacing:-.3px}
 .ctl.take{border:2.5px solid var(--blush-border);background:#fff;font-size:20px;color:transparent;transition:background .18s,border-color .18s,transform .12s}
 .ctl.take:active{transform:scale(.9)}
 .row.taken .ctl.take{background:var(--coral);border-color:var(--coral);color:#fff}
-.row.taken .ctl.skip{visibility:hidden}
+
 .empty{background:var(--card);border-radius:var(--r-lg);padding:34px 24px;text-align:center;margin-top:16px;box-shadow:0 3px 12px rgba(46,42,51,.05)}
 .empty .big{font-size:42px;margin-bottom:10px}
 
@@ -426,12 +426,6 @@ const QUICK=[
 ];
 const DAYL=["M","T","W","T","F","S","S"]; // Monday-first
 const SKIP_REASONS=[["✈️","Travelling"],["📦","Ran out"],["🤯","Forgot"],["🙅","Not needed today"]];
-const FACTS=[
- "<b>Did you know?</b> Creatine is one of the most researched supplements in sports science, with 500+ human studies.",
- "<b>Did you know?</b> Vitamin D3 and K2 are often paired because K2 helps direct calcium to bones.",
- "<b>Did you know?</b> Around 1 in 3 adults don't get enough magnesium from diet alone.",
- "<b>Did you know?</b> Consistency beats dosage. Most supplements only show benefits after weeks of regular use."
-];
 const GOAL_ORDER={
  training:["Creatine","Omega 3","Magnesium","Vitamin D3","Collagen","Zinc","Vitamin C","Vitamin K2","B12","Acidophilus","Ashwagandha","Iron","Protein Powder","Peptides"],
  energy:["B12","Vitamin D3","Iron","Magnesium","Omega 3","Vitamin C","Creatine","Zinc","Vitamin K2","Acidophilus","Ashwagandha","Collagen","Protein Powder","Peptides"],
@@ -947,6 +941,7 @@ function obRender(){
   }
   else if(name==="goal"){
     B.innerHTML=`<h1 class="reveal" style="--i:0">What's the main goal?</h1>
+      <p class="sub reveal" style="--i:0;margin-top:6px">Pick the one that matters most.</p>
       <div style="margin-top:14px">${GOALS.map((g,i)=>`<button class="opt reveal" style="--i:${i+1}" data-v="${g[2]}"><span class="em">${g[0]}</span>${g[1]}</button>`).join("")}</div>`;
     B.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{OB.goal=b.dataset.v;selOnly(b);setTimeout(()=>obGo(1),240);});
     markSel(B,OB.goal);
@@ -961,20 +956,17 @@ function obRender(){
   else if(name==="loading"){
     B.innerHTML=`<div class="center">
       <div class="loadjar" id="loadJar">${jarSVG(0,150,"zero")}</div>
-      <h2>Sorting your options…</h2>
+      <h2 id="loadH">Sorting your options…</h2>
       <p class="sub" style="margin:6px 0 16px">Finding what people focused on ${goalLabel(OB.goal)} take most, ${ageLabel(OB.age)}</p>
-      <div class="fact" id="factBox">${FACTS[0]}</div>
     </div>`;
-    let pct=0,fi=0;const t0=Date.now(),FACT_MS=2400;
+    let pct=0;
     const tick=()=>{
-      pct=Math.min(100,pct+1+Math.ceil(Math.random()*2));
+      pct=Math.min(100,pct+3+Math.ceil(Math.random()*3));
       const f=pct/100;
       const mood=pct>=100?"full":pct>0?"mid":"zero";
       $("#loadJar").innerHTML=jarSVG(f,150,mood);
-      const want=Math.min(FACTS.length-1,Math.floor((Date.now()-t0)/FACT_MS));
-      if(want!==fi){fi=want;const fb=$("#factBox");fb.style.opacity=0;setTimeout(()=>{fb.innerHTML=FACTS[fi];fb.style.opacity=1;},180);}
-      if(pct>=100){const j=$("#loadJar");if(j){const svg=j.querySelector("#jarsvg");if(svg){void svg.offsetWidth;svg.classList.add("jarbounce");}}OB.timer=setTimeout(()=>obGo(1),750);}
-      else OB.timer=setTimeout(tick,230);
+      if(pct>=100){const j=$("#loadJar");if(j){const svg=j.querySelector("#jarsvg");if(svg){void svg.offsetWidth;svg.classList.add("jarbounce");}}const lh=$("#loadH");if(lh)lh.textContent="Your picks are ready";OB.timer=setTimeout(()=>obGo(1),1600);}
+      else OB.timer=setTimeout(tick,110);
     };
     OB.timer=setTimeout(tick,350);
   }
@@ -1009,7 +1001,8 @@ function obRender(){
       <div class="eyebrow reveal" style="--i:0">Your stack, your rules</div>
       <h1 class="reveal" style="--i:1">Taking something that's<br>not on the list?</h1>
       <p class="sub reveal" style="--i:2;margin-top:8px;max-width:300px;margin-left:auto;margin-right:auto">Add anything in a couple of taps: supplements, powders, prescriptions, whatever you take.</p>
-      <div class="phonemock reveal" style="--i:3" id="addMock">${addDemoMarkup()}</div>
+      <div class="mocklbl reveal" style="--i:3">Example</div>
+      <div class="phonemock reveal" style="--i:3" id="addMock" aria-hidden="true">${addDemoMarkup()}</div>
     </div>`;
     F.innerHTML=`<button class="btn" id="obNext">Got it</button>`;
     startAddDemo();
@@ -1246,7 +1239,7 @@ function rowHTML(s,dkey,entry,asneeded,doseLabel){
     <span class="em">${s.emoji}</span>
     <div class="info"><div class="nm">${esc(s.name)}</div>${meta?`<div class="ds">${meta}</div>`:""}
     ${chip}</div>
-    ${!taken&&!asneeded?`<button class="ctl skip" data-skip="${dkey}" aria-label="Skip">✕</button>`:""}
+    ${!asneeded?`<button class="ctl skip" data-skip="${dkey}" aria-label="Skip">✕</button>`:""}
     <button class="ctl take" data-take="${dkey}" aria-label="Take">✓</button>
   </div>`;
 }
@@ -1279,15 +1272,19 @@ function toggleTake(id){
 }
 function skipSheet(dkey){
   const s=state.supps.find(x=>x.id===baseId(dkey));if(!s)return;
+  const tkNow=tkey(),cur=state.logs[tkNow]&&state.logs[tkNow][dkey],wasTakenNow=cur&&cur.s==="taken";
   openSheet(`
     <div class="sh-title">Skip ${esc(s.name)} today?</div>
-    <div class="sh-sub">No judgement. A reason keeps your history honest.</div>
+    <div class="sh-sub">${wasTakenNow?"Changed your mind? This replaces today's tick. No judgement.":"No judgement. A reason keeps your history honest."}</div>
     ${SKIP_REASONS.map(r=>`<button class="opt" data-r="${r[1]}"><span class="em">${r[0]}</span>${r[1]}</button>`).join("")}
     <button class="btn ghost" id="skCancel" style="margin-top:10px">Cancel</button>
   `);
   $("#sheet").querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
     const tk=tkey();if(!state.logs[tk])state.logs[tk]={};
     const before=dayStats(tk);
+    const prev=state.logs[tk][dkey];
+    // switching a tick to a skip: give back the stock only if that take actually used some
+    if(prev&&prev.s==="taken"&&prev.dec&&s.trackStock&&typeof s.stock==="number")s.stock+=1;
     state.logs[tk][dkey]={s:"skipped",r:b.dataset.r,t:Date.now()};track("skip");
     save();closeSheet();renderToday();
     // if marking this not-needed just completed the day, celebrate
