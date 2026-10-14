@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="color-scheme" content="light only">
 <meta name="theme-color" content="#FFF9F3">
-<title>Jack and Pill</title>
+<title>Jack &amp; Pill</title>
 <style>
 :root{
   color-scheme:light only;
@@ -574,8 +574,8 @@ const SKINS=[
   // ---- Jack in outfits (4) - same amber jar, accessory on top ----
   {id:"coach",name:"Coach Jack",blurb:"Gym day",tier:"outfit",container:"#FFFFFF",cstroke:"#E8DCD2",fill:"#F5A93B",gran:"#E08A26",granTop:"#F5A93B",lid:"#262A3F",lid2:"#3A3F5C",shine:"#fff",acc:"headband"},
   {id:"cool",name:"Cool Jack",blurb:"Feeling good",tier:"outfit",container:"#FFFFFF",cstroke:"#E8DCD2",fill:"#F5A93B",gran:"#E08A26",granTop:"#F5A93B",lid:"#262A3F",lid2:"#3A3F5C",shine:"#fff",acc:"shades"},
-  {id:"wizard",name:"Wizard Jack",blurb:"30-day streak",tier:"outfit",container:"#FFFFFF",cstroke:"#E8DCD2",fill:"#F5A93B",gran:"#E08A26",granTop:"#F5A93B",lid:"#262A3F",lid2:"#3A3F5C",shine:"#fff",acc:"wizard"},
-  {id:"king",name:"King Jack",blurb:"Perfect month",tier:"outfit",container:"#FFFFFF",cstroke:"#E8DCD2",fill:"#F5A93B",gran:"#E08A26",granTop:"#F5A93B",lid:"#262A3F",lid2:"#3A3F5C",shine:"#fff",acc:"crown"},
+  {id:"wizard",name:"Wizard Jack",blurb:"4-week streak",tier:"outfit",container:"#FFFFFF",cstroke:"#E8DCD2",fill:"#F5A93B",gran:"#E08A26",granTop:"#F5A93B",lid:"#262A3F",lid2:"#3A3F5C",shine:"#fff",acc:"wizard"},
+  {id:"king",name:"King Jack",blurb:"Perfect week",tier:"outfit",container:"#FFFFFF",cstroke:"#E8DCD2",fill:"#F5A93B",gran:"#E08A26",granTop:"#F5A93B",lid:"#262A3F",lid2:"#3A3F5C",shine:"#fff",acc:"crown"},
   // ---- alternate characters (6) - different shapes ----
   {id:"bottle",name:"Pip the Bottle",blurb:"Pill bottle",tier:"char",shape:"bottle",fill:"#7C6BC4",gran:"#5E4DA0",granTop:"#9384D6"},
   {id:"capsule",name:"Cap the Capsule",blurb:"Two-tone capsule",tier:"char",shape:"capsule",fill:"#F5A93B",gran:"#E08A26",granTop:"#F5A93B"},
@@ -762,14 +762,14 @@ function shareCardSheet(){
       <div class="sc-big">${wk.good} of 7 good days</div>
       <div class="sc-dots">${dots}</div>
       <div class="sc-streak">${sk.alive?"🔥":"🪵"} ${sk.streak} week streak${sk.freezes>0?" · ❄️ "+sk.freezes+" banked":""}</div>
-      <div class="sc-foot">Made with Jack and Pill 🫙</div>
+      <div class="sc-foot">Made with Jack &amp; Pill 🫙</div>
     </div>
     <button class="btn" id="scShare" style="margin-top:14px">Share</button>
     <p class="sub center" style="margin-top:10px;font-size:12.5px">Or screenshot the card and post it anywhere.</p>
   `);
   $("#scShare").onclick=async()=>{
     track("share");
-    const txt=`My week with Jack: ${wk.good} of 7 good days, ${sk.streak}-week streak 🫙 Made with Jack and Pill`;
+    const txt=`My week with Jack: ${wk.good} of 7 good days, ${sk.streak}-week streak 🫙 Made with Jack & Pill`;
     try{
       if(navigator.share){await navigator.share({text:txt});}
       else if(navigator.clipboard){await navigator.clipboard.writeText(txt);toast("Copied. Paste it anywhere");}
@@ -1022,7 +1022,7 @@ function obRender(){
     B.innerHTML=`<div class="center">
       <div class="eyebrow reveal" style="--i:0">Early tester perk</div>
       <h1 class="reveal" style="--i:1">Pro is coming.<br>You get it free. Forever.</h1>
-      <p class="sub reveal" style="--i:2;margin-top:8px;max-width:310px;margin:8px auto 0">Jack and Pill Pro will bring feel-insights, the full wardrobe and every future feature. As an early tester, you'll never pay a penny for it.</p>
+      <p class="sub reveal" style="--i:2;margin-top:8px;max-width:310px;margin:8px auto 0">Jack &amp; Pill Pro will bring feel-insights, the full wardrobe and every future feature. As an early tester, you'll never pay a penny for it.</p>
       <div class="founderbadge reveal" style="--i:3">🫙 Founding Tester</div>
     </div>`;
     F.innerHTML=`<button class="btn" id="obNext">Claim founder access</button>`;
@@ -1626,7 +1626,7 @@ function settingsSheet(){
     ${FORGIVING?"":`<div class="f-label">Plan</div>
     <div class="pick" style="margin-top:0;box-shadow:none;border:2px solid var(--line)" id="setPro">
       <span class="em">${isPro()?"⭐":"🔓"}</span>
-      <div><div class="nm" style="font-size:15px">${isPro()?"Jack and Pill Pro · active":"Unlock Pro"}</div><div class="ds">${isPro()?"Thanks for the support":"Insights, wardrobe, exports and themes"}</div></div>
+      <div><div class="nm" style="font-size:15px">${isPro()?"Jack &amp; Pill Pro · active":"Unlock Pro"}</div><div class="ds">${isPro()?"Thanks for the support":"Insights, wardrobe, exports and themes"}</div></div>
       ${isPro()?'<span style="margin-left:auto;font-weight:800;color:var(--coral)">✓</span>':'<span class="arr" style="margin-left:auto">›</span>'}
     </div>`}
     <div class="f-label">Appearance</div>
@@ -1679,7 +1679,7 @@ function settingsSheet(){
 function paywallSheet(reason){
   openSheet(`
     <div class="center" style="margin:4px 0 6px">${jarSVG(1,96)}</div>
-    <div class="sh-title center">Jack and Pill Pro</div>
+    <div class="sh-title center">Jack &amp; Pill Pro</div>
     <div class="sh-sub center">${esc(reason||"Everything, forever, one payment.")}</div>
     ${[["👕","The full wardrobe","Every Jack and character, yours to wear"],
        ["🔍","Feel insights","Connects your best weeks to what you took"],
