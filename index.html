@@ -1136,6 +1136,8 @@ function renderAll(){renderToday();renderStack();renderWeeks();}
 
 /* ---------- TODAY ---------- */
 const SLOTS=[["morning","Morning"],["lunch","Lunch"],["evening","Evening"],["anytime","Anytime"]];
+// week line under the dots: never "6 of 5" (Lloyd 2026-10-18)
+function weekLine(good,target){return good>=target?`Target hit: ${good} good day${good===1?"":"s"} this week 🎯`:`${good} of ${target} good days this week`;}
 function renderToday(){
   const tk=tkey();const log=state.logs[tk]||{};
   const ds=dayStats(tk);
@@ -1179,7 +1181,7 @@ function renderToday(){
       <div class="jarsum">${ds.denom?`<b>${ds.taken}</b> of <b>${ds.denom}</b> taken${done?" · day done 🎉":""}`:"No scheduled doses today"}</div>
     </div>
     <div class="weekdots">${dots}</div>
-    <div style="text-align:center;font-size:12.5px;font-weight:800;color:var(--ink-soft)">${wk.good} of ${state.profile.weeklyTarget} good days this week</div>
+    <div style="text-align:center;font-size:12.5px;font-weight:800;color:var(--ink-soft)">${weekLine(wk.good,state.profile.weeklyTarget)}</div>
     <div id="checkinSlot"></div>
     <div id="lowStockSlot"></div>
     <div id="founderSlot"></div>
