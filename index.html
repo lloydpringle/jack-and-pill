@@ -754,7 +754,7 @@ function shareCardSheet(){
   const sk=streakWeeks();
   const wk=weekStats(dkey(mondayOf(today())));
   const pct=wk.days.filter(d=>!d.future&&d.denom>0).length?wk.good/7:0;
-  const dots=wk.days.map(d=>`<span class="scdot ${d.future?"fut":d.neutral?"neu":d.good?"good":"miss"}"></span>`).join("");
+  const dots=wk.days.map(d=>`<span class="scdot ${d.future||openToday(d.k)?"fut":d.neutral?"neu":d.good?"good":"miss"}"></span>`).join("");
   openSheet(`
     <div class="sh-title center">My week with Jack</div>
     <div class="sharecard" id="shareCard">
@@ -1137,6 +1137,8 @@ function renderAll(){renderToday();renderStack();renderWeeks();}
 /* ---------- TODAY ---------- */
 const SLOTS=[["morning","Morning"],["lunch","Lunch"],["evening","Evening"],["anytime","Anytime"]];
 // week line under the dots: never "6 of 5" (Lloyd 2026-10-18)
+// today stays empty (not a pink miss) until something is logged today (Lloyd 2026-10-19)
+function openToday(k){return k===tkey()&&!(state.logs[k]&&Object.keys(state.logs[k]).length);}
 function weekLine(good,target){return good>=target?`Target hit: ${good} good day${good===1?"":"s"} this week 🎯`:`${good} of ${target} good days this week`;}
 function renderToday(){
   const tk=tkey();const log=state.logs[tk]||{};
@@ -1164,7 +1166,7 @@ function renderToday(){
   const todayIdx=(today().getDay()+6)%7;
   const dots=wk.days.map((d,i)=>{
     let cls="wd";
-    if(d.future)cls+=" future";
+    if(d.future||openToday(d.k))cls+=" future";
     else if(d.good)cls+=" good";
     else if(d.pct>0)cls+=" part";
     if(i===todayIdx)cls+=" today";
@@ -1722,12 +1724,12 @@ function renderWeeks(){
       const isCur=mk===dkey(thisMon);
       const tgt=state.profile.weeklyTarget;
       const met=ws.good>=tgt;
-      const dots=ws.days.map(d=>`<span class="gd ${d.future?"fut":d.good?"on":d.pct>0?"part":""}"></span>`).join("");
+      const dots=ws.days.map(d=>`<span class="gd ${d.future||openToday(d.k)?"fut":d.good?"on":d.pct>0?"part":""}"></span>`).join("");
       weekRows+=`<div class="wkrow">
         <div class="wkmain">
           <div class="wktop"><span class="lbl">${isCur?"This week":fmtShort(fromKey(mk))}</span>${ci?`<span class="fe">${FEELS[ci.feel-1]}</span>`:""}</div>
           <div class="gddots">${dots}</div>
-          <div class="sub2">${ws.good} of ${tgt} good days${met?' · <span class="hit">target hit ✓</span>':""}</div>
+          <div class="sub2">${met?`<span class="hit">Target hit: ${ws.good} good day${ws.good===1?"":"s"} ✓</span>`:`${ws.good} of ${tgt} good days`}</div>
         </div>
       </div>`;
       m=addDays(m,-7);count++;
@@ -1743,7 +1745,7 @@ function renderWeeks(){
       const hi=cis.filter(c=>c.feel>=4),lo=cis.filter(c=>c.feel<=3);
       if(hi.length&&lo.length){
         const avg=a=>Math.round(a.reduce((x,c)=>x+c.pct,0)/a.length);
-        insight=`<div class="card insight"><div class="tt">Early pattern</div><p>On weeks you felt good you averaged <b>${avg(hi)}%</b> of your doses, against <b>${avg(lo)}%</b> on rougher weeks. Worth keeping Jack full.</p></div>`;
+        insight=`<div class="card insight"><div class="tt">Early pattern</div><p>On weeks you felt good you averaged <b>${avg(hi)}%</b> of your doses, against <b>${avg(lo)}%</b> on rougher weeks.</p></div>`;
       }else{
         insight=`<div class="card insight"><div class="tt">Early pattern</div><p>Your check-ins are all similar so far. A few more varied weeks will sharpen this insight.</p></div>`;
       }
